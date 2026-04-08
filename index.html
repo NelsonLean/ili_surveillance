@@ -1213,13 +1213,11 @@ FACILITIES.forEach(f => {
 // Maps a rate value to a background+text colour pair
 function heatColor(rate) {
   if (rate === null || rate === undefined) return null;
-  // Colour stops keyed to threshold context
-  if (rate >= 30)   return { bg:'rgba(139,92,246,0.75)',  fg:'#fff' };   // extraordinary zone
-  if (rate >= 22.5) return { bg:'rgba(239,68,68,0.80)',   fg:'#fff' };   // high zone
-  if (rate >= 18.8) return { bg:'rgba(249,115,22,0.78)',  fg:'#fff' };   // moderate zone
-  if (rate >= 14.1) return { bg:'rgba(245,158,11,0.72)',  fg:'#1a1a1a'};// epidemic zone
-  if (rate >= 10)   return { bg:'rgba(59,130,246,0.40)',  fg:'var(--ink2)'}; // sub-epidemic
-  return                   { bg:'rgba(59,130,246,0.18)',  fg:'var(--ink3)'}; // low
+  if (rate >= THR.xtra) return { bg:'#7B3FA0', fg:'#fff'     }; // Extraordinary
+  if (rate >= THR.high) return { bg:'#EF0000', fg:'#fff'     }; // High
+  if (rate >= THR.mod)  return { bg:'#E07A30', fg:'#fff'     }; // Moderate
+  if (rate >= THR.epi)  return { bg:'#FFFF00', fg:'#1a1a1a'  }; // Low
+  return                       { bg:'#4CAF50', fg:'#1a1a1a'  }; // Below seasonal
 }
 
 /* ── Build heatmap ── */
@@ -1248,18 +1246,14 @@ function buildHeatmap() {
 
   html += `</div>`;
 
-  // Colour legend
+  // Colour legend — solid swatches, no gradient
   html += `
-    <div class="heatmap-legend">
-      <span>Low</span>
-      <div class="hm-legend-bar" style="background:linear-gradient(to right,rgba(59,130,246,0.18),rgba(245,158,11,0.72),rgba(249,115,22,0.78),rgba(239,68,68,0.80),rgba(139,92,246,0.75));"></div>
-      <span>High</span>
-    </div>
-    <div class="hm-threshold-note">
-      <span style="color:rgba(245,158,11,0.9)">■ ≥14.1% epidemic</span>
-      <span style="color:rgba(249,115,22,0.9)">■ ≥18.8% moderate</span>
-      <span style="color:rgba(239,68,68,0.9)">■ ≥22.5% high</span>
-      <span style="color:rgba(139,92,246,0.9)">■ ≥30% extraordinary</span>
+    <div class="hm-threshold-note" style="margin-top:12px;">
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#4CAF50;vertical-align:middle;margin-right:4px;"></span>Below seasonal &lt;${THR.epi.toFixed(1)}%</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#FFFF00;vertical-align:middle;margin-right:4px;"></span>Low ${THR.epi.toFixed(1)}–${THR.mod.toFixed(1)}%</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#E07A30;vertical-align:middle;margin-right:4px;"></span>Moderate ${THR.mod.toFixed(1)}–${THR.high.toFixed(1)}%</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#EF0000;vertical-align:middle;margin-right:4px;"></span>High ${THR.high.toFixed(1)}–${THR.xtra.toFixed(1)}%</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#7B3FA0;vertical-align:middle;margin-right:4px;"></span>Extraordinary ≥${THR.xtra.toFixed(1)}%</span>
     </div>
   </div>`;
 
