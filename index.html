@@ -464,6 +464,41 @@ body {
   display:flex; gap:16px; flex-wrap:wrap;
 }
 
+/* ── Heatmap reference table ── */
+.hm-ref-wrap {
+  margin-top:16px; padding-top:14px;
+  border-top:1px solid var(--border);
+}
+.hm-ref-title {
+  font-size:11px; font-weight:600; color:var(--ink3);
+  letter-spacing:0.04em; margin-bottom:10px;
+  text-transform:uppercase;
+}
+.hm-ref-table {
+  width:100%; border-collapse:collapse;
+  font-size:11.5px; min-width:540px;
+}
+.hm-ref-table th {
+  font-size:10px; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; color:var(--ink4);
+  padding:5px 10px; text-align:left;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.hm-ref-table td {
+  padding:7px 10px; border-bottom:1px solid var(--surface2);
+  font-size:11.5px; white-space:nowrap;
+}
+.hm-ref-table td:not(:first-child) {
+  font-family:'DM Mono',monospace; font-size:11px;
+}
+.hm-ref-table tr:last-child td { border-bottom:none; }
+.hm-ref-table tr:hover td { background:var(--surface2); }
+.hm-ref-note {
+  font-size:10px; color:var(--ink4); margin-top:8px;
+  font-style:italic; line-height:1.6;
+}
+
 /* ══════════════════════════════════════════
    SCROLLBAR
 ══════════════════════════════════════════ */
@@ -1134,37 +1169,44 @@ const FACILITIES = [
     cases:[105,122,134,116,155,145,71,107,122,107,70,72,86],
     opd:  [665,763,828,778,677,839,374,799,709,702,432,514,490],
     rate: [15.8,16.0,16.2,14.9,22.9,17.3,19.0,13.4,17.2,15.2,16.2,14.0,17.6],
-    total_c:1412, total_o:8570 },
+    total_c:1412, total_o:8570,
+    thr: { epi:14.8, mod:14.2, high:22.6, xtra:27.0 }, baseline:'2024–2025' },
   { name:'KK Felda Umas-Umas',  short:'Felda U-U',     color:'#FBBF24',
     cases:[61,116,116,67,96,77,33,94,87,59,51,34,40],
     opd:  [461,459,443,445,435,447,245,469,449,399,284,277,297],
     rate: [13.2,25.3,26.2,15.1,22.1,17.2,13.5,20.0,19.4,14.8,18.0,12.3,13.5],
-    total_c:931, total_o:5110 },
+    total_c:931, total_o:5110,
+    thr: { epi:27.2, mod:25.5, high:37.6, xtra:47.9 }, baseline:'2024–2025' },
   { name:'KK Kalabakan',        short:'Kalabakan',     color:'#4ADE80',
     cases:[59,49,45,57,46,34,28,58,70,48,39,37,25],
     opd:  [186,215,206,226,192,161,101,212,232,181,178,186,136],
     rate: [31.7,22.8,21.8,25.2,24.0,21.1,27.7,27.4,30.2,26.5,21.9,19.9,18.4],
-    total_c:595, total_o:2412 },
+    total_c:595, total_o:2412,
+    thr: { epi:16.9, mod:15.8, high:25.3, xtra:31.8 }, baseline:'2024–2025' },
   { name:'KK Merotai Besar',    short:'Merotai Besar', color:'#F87171',
     cases:[37,47,55,91,93,98,27,67,98,73,44,64,64],
     opd:  [205,495,508,535,541,506,354,608,520,523,316,387,349],
     rate: [18.0,9.5,10.8,17.0,17.2,19.4,7.6,11.0,18.8,14.0,13.9,16.5,18.3],
-    total_c:858, total_o:5847 },
+    total_c:858, total_o:5847,
+    thr: { epi:14.3, mod:11.8, high:28.0, xtra:32.8 }, baseline:'2024–2025' },
   { name:'KK Sungai Tamang',    short:'Sg. Tamang',    color:'#C084FC',
     cases:[32,38,40,38,33,29,13,14,16,23,17,16,0],
     opd:  [171,170,186,193,204,208,92,116,122,125,102,83,0],
     rate: [18.7,22.4,21.5,19.7,16.2,13.9,14.1,12.1,13.1,18.4,16.7,19.3,null],
-    total_c:309, total_o:1772 },
+    total_c:309, total_o:1772,
+    thr: { epi:29.3, mod:28.0, high:39.4, xtra:44.2 }, baseline:'2024–2025' },
   { name:'KK Tawau',            short:'KK Tawau',      color:'#FB923C',
     cases:[455,489,579,656,534,582,298,669,672,588,325,426,441],
     opd:  [4737,4432,4235,4482,4218,4699,2441,4824,4442,4041,2465,2580,2816],
     rate: [9.6,11.0,13.7,14.6,12.7,12.4,12.2,13.9,15.1,14.6,13.2,16.5,15.7],
-    total_c:6714, total_o:50412 },
+    total_c:6714, total_o:50412,
+    thr: { epi:12.4, mod:12.0, high:16.8, xtra:20.2 }, baseline:'2024–2025' },
   { name:'KK Kinabutan',        short:'Kinabutan',     color:'#22D3EE',
     cases:[18,26,32,45,38,39,14,43,50,69,19,25,36],
     opd:  [319,427,444,491,469,507,207,485,485,584,285,276,349],
     rate: [5.6,6.1,7.2,9.2,8.1,7.7,6.8,8.9,10.3,11.8,6.7,9.1,10.3],
-    total_c:454, total_o:5328 }
+    total_c:454, total_o:5328,
+    thr: { epi:9.2, mod:8.9, high:13.2, xtra:14.5 }, baseline:'2024–2025' }
 ];
 
 /* ── Build facility summary cards ── */
@@ -1213,15 +1255,15 @@ FACILITIES.forEach(f => {
     </span>`;
 });
 
-/* ── Heatmap colour scale ── */
-// Maps a rate value to a background+text colour pair
-function heatColor(rate) {
+/* ── Facility-specific heat colour ── */
+function heatColor(rate, fac) {
   if (rate === null || rate === undefined) return null;
-  if (rate >= THR.xtra) return { bg:'#7B3FA0', fg:'#fff'     }; // Extraordinary
-  if (rate >= THR.high) return { bg:'#EF0000', fg:'#fff'     }; // High
-  if (rate >= THR.mod)  return { bg:'#E07A30', fg:'#fff'     }; // Moderate
-  if (rate >= THR.epi)  return { bg:'#FFFF00', fg:'#1a1a1a'  }; // Low
-  return                       { bg:'#4CAF50', fg:'#1a1a1a'  }; // Below seasonal
+  const t = fac ? fac.thr : THR;
+  if (rate >= t.xtra) return { bg:'#7B3FA0', fg:'#fff',    level:'Extraordinary' };
+  if (rate >= t.high) return { bg:'#EF0000', fg:'#fff',    level:'High' };
+  if (rate >= t.mod)  return { bg:'#E07A30', fg:'#fff',    level:'Moderate' };
+  if (rate >= t.epi)  return { bg:'#FFFF00', fg:'#1a1a1a', level:'Low' };
+  return                     { bg:'#4CAF50', fg:'#1a1a1a', level:'Below seasonal' };
 }
 
 /* ── Build heatmap ── */
@@ -1235,29 +1277,73 @@ function buildHeatmap() {
   html += `<div class="hm-header fac-col">Facility</div>`;
   weeks.forEach(w => { html += `<div class="hm-header">W${w}</div>`; });
 
-  // Data rows
+  // Data rows — colour relative to each facility's own threshold
   FACILITIES.forEach(f => {
     html += `<div class="hm-label" title="${f.name}">${f.short}</div>`;
     f.rate.forEach((r, i) => {
-      const c = heatColor(r);
+      const c = heatColor(r, f);
       if (!c) {
         html += `<div class="hm-cell null-cell">—</div>`;
       } else {
-        html += `<div class="hm-cell" style="background:${c.bg};color:${c.fg};" title="${f.name} Wk${weeks[i]}: ${r.toFixed(1)}%">${r.toFixed(1)}</div>`;
+        const tip = `${f.name} · Week ${weeks[i]}\nRate: ${r.toFixed(1)}% → ${c.level}\n─\nFacility thresholds (2024–25)\nEpidemic: ${f.thr.epi}%  Moderate: ${f.thr.mod}%\nHigh: ${f.thr.high}%  Extraordinary: ${f.thr.xtra}%`;
+        html += `<div class="hm-cell" style="background:${c.bg};color:${c.fg};" title="${tip}">${r.toFixed(1)}</div>`;
       }
     });
   });
 
   html += `</div>`;
 
-  // Colour legend — solid swatches, no gradient
+  // Colour legend
   html += `
     <div class="hm-threshold-note" style="margin-top:12px;">
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#4CAF50;vertical-align:middle;margin-right:4px;"></span>Below seasonal &lt;${THR.epi.toFixed(1)}%</span>
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#FFFF00;vertical-align:middle;margin-right:4px;"></span>Low ${THR.epi.toFixed(1)}–${THR.mod.toFixed(1)}%</span>
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#E07A30;vertical-align:middle;margin-right:4px;"></span>Moderate ${THR.mod.toFixed(1)}–${THR.high.toFixed(1)}%</span>
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#EF0000;vertical-align:middle;margin-right:4px;"></span>High ${THR.high.toFixed(1)}–${THR.xtra.toFixed(1)}%</span>
-      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#7B3FA0;vertical-align:middle;margin-right:4px;"></span>Extraordinary ≥${THR.xtra.toFixed(1)}%</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#4CAF50;vertical-align:middle;margin-right:4px;"></span>Below seasonal</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#FFFF00;vertical-align:middle;margin-right:4px;"></span>Low</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#E07A30;vertical-align:middle;margin-right:4px;"></span>Moderate</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#EF0000;vertical-align:middle;margin-right:4px;"></span>High</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#7B3FA0;vertical-align:middle;margin-right:4px;"></span>Extraordinary</span>
+      <span style="color:var(--ink4);font-style:italic;">Colours based on facility-specific thresholds</span>
+    </div>`;
+
+  // Facility threshold reference table
+  html += `
+    <div class="hm-ref-wrap">
+      <div class="hm-ref-title">Facility-specific thresholds · 2024–2025 baseline</div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <table class="hm-ref-table">
+          <thead>
+            <tr>
+              <th>Facility</th>
+              <th>Baseline</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#4CAF50;margin-right:4px;vertical-align:middle;"></span>Below seasonal</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#FFFF00;margin-right:4px;vertical-align:middle;"></span>Low (epidemic)</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#E07A30;margin-right:4px;vertical-align:middle;"></span>Moderate</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#EF0000;margin-right:4px;vertical-align:middle;"></span>High</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#7B3FA0;margin-right:4px;vertical-align:middle;"></span>Extraordinary</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+  FACILITIES.forEach(f => {
+    html += `
+            <tr>
+              <td style="display:flex;align-items:center;gap:7px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:${f.color};flex-shrink:0;display:inline-block;"></span>
+                ${f.short}
+              </td>
+              <td style="color:var(--ink3);font-style:italic;">${f.baseline}</td>
+              <td>&lt; ${f.thr.epi.toFixed(1)}%</td>
+              <td>${f.thr.epi.toFixed(1)}–${f.thr.mod.toFixed(1)}%</td>
+              <td>${f.thr.mod.toFixed(1)}–${f.thr.high.toFixed(1)}%</td>
+              <td>${f.thr.high.toFixed(1)}–${f.thr.xtra.toFixed(1)}%</td>
+              <td>≥ ${f.thr.xtra.toFixed(1)}%</td>
+            </tr>`;
+  });
+
+  html += `
+          </tbody>
+        </table>
+      </div>
+      <p class="hm-ref-note">Thresholds derived from 2024–2025 weekly ILI consultation rates per facility. Epidemic threshold = median; Moderate/High/Extraordinary = 40th/90th/97.5th percentile of combined 2024–2025 weekly rates.</p>
     </div>
   </div>`;
 
