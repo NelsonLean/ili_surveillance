@@ -1297,9 +1297,9 @@ function buildHeatmap() {
     });
   });
 
-  html += `</div>`;
+  html += `</div></div>`;  // close heatmap-grid + heatmap (scroll ends here)
 
-  // Colour legend
+  // Colour legend — outside scroll container, full width
   html += `
     <div class="hm-threshold-note" style="margin-top:12px;">
       <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#4CAF50;vertical-align:middle;margin-right:4px;"></span>Below seasonal threshold</span>
@@ -1308,10 +1308,9 @@ function buildHeatmap() {
       <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#EF0000;vertical-align:middle;margin-right:4px;"></span>High</span>
       <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#7B3FA0;vertical-align:middle;margin-right:4px;"></span>Extraordinary</span>
       <span style="color:var(--ink4);font-style:italic;">Colours based on facility-specific thresholds</span>
-    </div>`;
+    </div>
 
-  // Facility threshold reference table
-  html += `
+  <!-- Reference table — its own independent scroll container -->
     <div class="hm-ref-wrap">
       <div class="hm-ref-title">Facility-specific thresholds · 2024–2025 baseline</div>
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
@@ -1350,8 +1349,7 @@ function buildHeatmap() {
         </table>
       </div>
       <p class="hm-ref-note">Thresholds derived from 2024–2025 weekly ILI consultation rates per facility. Epidemic threshold = median; Moderate/High/Extraordinary = 40th/90th/97.5th percentile of combined 2024–2025 weekly rates.</p>
-    </div>
-  </div>`;
+    </div>`;
 
   hm.innerHTML = html;
 }
