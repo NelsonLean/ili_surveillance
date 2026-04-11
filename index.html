@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ILI Surveillance · Tawau</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ══════════════════════════════════════════
+   THEME TOKENS
+══════════════════════════════════════════ */
+:root, [data-theme="light"] {
+  --bg:          #F8F9FC;
+  --surface:     #FFFFFF;
+  --surface2:    #F2F4F8;
+  --border:      #E4E8F0;
+  --border2:     #CDD3DF;
+  --ink:         #0F1724;
+  --ink2:        #3D4A5C;
+  --ink3:        #7A8899;
+  --ink4:        #B0BAC8;
+  --accent:      #0057FF;
+  --accent-bg:   #EEF3FF;
+  --accent-text: #0057FF;
+
+  --thr-epi-bg:  #FFFBEB; --thr-epi-bd:  #FDE68A;
+  --thr-mod-bg:  #FFF7ED; --thr-mod-bd:  #FED7AA;
+  --thr-hi-bg:   #FEF2F2; --thr-hi-bd:   #FECACA;
+  --thr-xtra-bg: #F5F3FF; --thr-xtra-bd: #DDD6FE;
+
+  --status-bg:   linear-gradient(135deg,#EEF3FF,#F5F0FF);
+  --status-bd:   #D4DDFF;
+  --status-lbl:  #7A8899;
+  --status-tag-bg:  #FEF3C7; --status-tag-c: #92400E; --status-tag-bd: #FDE68A;
+
+  --badge-green-bg: #ECFDF5; --badge-green-c: #059669;
+  --card-shadow: 0 4px 16px rgba(0,0,0,0.07);
+
+  --tog-on-bg:   #0057FF; --tog-on-c: #FFFFFF; --tog-on-bd: #0057FF;
+  --tog-off-bg:  #F2F4F8; --tog-off-c: #7A8899; --tog-off-bd: #CDD3DF;
+
+  --theme-icon: "☀";
+}
+
+[data-theme="dark"] {
+  --bg:          #0D1117;
+  --surface:     #161B22;
+  --surface2:    #1C2430;
+  --border:      #2A3341;
+  --border2:     #3A4455;
+  --ink:         #E6EDF3;
+  --ink2:        #B1BAC4;
+  --ink3:        #7D8997;
+  --ink4:        #4A5568;
+  --accent:      #4D94FF;
+  --accent-bg:   rgba(77,148,255,0.14);
+  --accent-text: #7AADFF;
+
+  --thr-epi-bg:  rgba(245,158,11,0.1);  --thr-epi-bd:  rgba(245,158,11,0.3);
+  --thr-mod-bg:  rgba(249,115,22,0.1);  --thr-mod-bd:  rgba(249,115,22,0.3);
+  --thr-hi-bg:   rgba(239,68,68,0.1);   --thr-hi-bd:   rgba(239,68,68,0.3);
+  --thr-xtra-bg: rgba(139,92,246,0.1);  --thr-xtra-bd: rgba(139,92,246,0.3);
+
+  --status-bg:   linear-gradient(135deg,rgba(77,148,255,0.12),rgba(139,92,246,0.1));
+  --status-bd:   rgba(77,148,255,0.25);
+  --status-lbl:  #7D8997;
+  --status-tag-bg:  rgba(245,158,11,0.15); --status-tag-c: #FCD34D; --status-tag-bd: rgba(245,158,11,0.3);
+
+  --badge-green-bg: rgba(16,185,129,0.15); --badge-green-c: #34D399;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+
+  --tog-on-bg:   #4D94FF; --tog-on-c: #FFFFFF; --tog-on-bd: #4D94FF;
+  --tog-off-bg:  #1C2430; --tog-off-c: #7D8997; --tog-off-bd: #3A4455;
+
+  --theme-icon: "☾";
+}
+
+/* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13.5px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── Entrance animation ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.fade-up { animation: fadeUp 0.4s ease both; }
+.d1{animation-delay:.05s} .d2{animation-delay:.11s} .d3{animation-delay:.17s} .d4{animation-delay:.23s} .d5{animation-delay:.29s}
+
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 22px;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  transition: background 0.25s, border-color 0.25s;
+}
+.h-left  { display:flex; align-items:center; gap:13px; }
+.h-right { display:flex; align-items:center; gap:9px; flex-shrink:0; }
+
+.logo-mark {
+  width:32px; height:32px; background:var(--accent);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background 0.25s;
+}
+.logo-mark svg { width:16px; height:16px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; }
+
+.h-title { font-size:15px; font-weight:600; color:var(--ink); letter-spacing:-0.01em; line-height:1.2; }
+.h-sub   { font-size:11px; color:var(--ink3); margin-top:1px; }
+
+.badge {
+  font-size:10px; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; padding:3px 9px; border-radius:20px; white-space:nowrap;
+}
+.badge-blue  { background:var(--accent-bg); color:var(--accent-text); }
+.badge-green { background:var(--badge-green-bg); color:var(--badge-green-c); }
+
+.live-dot {
+  width:7px; height:7px; border-radius:50%; background:#10B981;
+  animation:blink 2.2s ease-in-out infinite;
+  display:inline-block; vertical-align:middle; margin-right:5px;
+}
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
+
+/* ── Theme toggle button ── */
+.theme-btn {
+  width:36px; height:36px;
+  border-radius:50%;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--ink2);
+  font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition: all 0.2s; flex-shrink:0; line-height:1;
+}
+.theme-btn:hover { background:var(--border); transform:scale(1.08); }
+.theme-btn:active { transform:scale(0.95); }
+
+/* ══════════════════════════════════════════
+   MOBILE TABS
+══════════════════════════════════════════ */
+.mob-tabs {
+  display:none;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 16px;
+  transition:background 0.25s;
+}
+.mob-tab {
+  flex:1; padding:11px 0; text-align:center;
+  font-size:12px; font-weight:500; color:var(--ink3);
+  border:none; background:none; cursor:pointer;
+  border-bottom:2px solid transparent; transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.mob-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* ══════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════ */
+.shell {
+  display:grid;
+  grid-template-columns:258px minmax(0,1fr);
+  height:calc(100vh - 58px);
+  overflow:hidden;
+}
+.sidebar {
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  overflow-y:auto; overflow-x:hidden;
+  padding-bottom:28px;
+  transition:background 0.25s,border-color 0.25s;
+  min-width:0;
+}
+.main {
+  overflow-y:auto; overflow-x:hidden;
+  padding:22px 22px 28px;
+  display:flex; flex-direction:column; gap:18px;
+  min-width:0;
+}
+
+/* ══════════════════════════════════════════
+   SIDEBAR INTERNALS
+══════════════════════════════════════════ */
+.sb-group { padding:20px 18px 6px; }
+.sb-heading {
+  font-size:9.5px; font-weight:600; letter-spacing:0.11em;
+  text-transform:uppercase; color:var(--ink4);
+  margin-bottom:12px; display:flex; align-items:center; gap:7px;
+}
+.sb-heading::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.status-hero {
+  margin:4px 18px 0;
+  background:var(--status-bg);
+  border:1px solid var(--status-bd);
+  border-radius:10px; padding:14px 16px;
+  transition:background 0.25s, border-color 0.25s;
+}
+.sh-row   { display:flex; justify-content:space-between; align-items:baseline; }
+.sh-label { font-size:11px; color:var(--status-lbl); }
+.sh-val   { font-family:'DM Mono',monospace; font-size:26px; font-weight:500; color:var(--accent); line-height:1; }
+.sh-2row  { margin-top:8px; display:flex; justify-content:space-between; align-items:center; }
+.sh-tag   {
+  font-size:10px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
+  padding:3px 9px; border-radius:20px;
+  background:var(--status-tag-bg); color:var(--status-tag-c); border:1px solid var(--status-tag-bd);
+}
+
+.thr-list { display:flex; flex-direction:column; gap:6px; }
+.thr-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 12px; border-radius:8px; border:1px solid transparent;
+  transition:transform 0.15s, box-shadow 0.15s, background 0.25s, border-color 0.25s;
+  cursor:default;
+}
+.thr-item:hover { transform:translateX(2px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.thr-epi  { background:var(--thr-epi-bg);  border-color:var(--thr-epi-bd); }
+.thr-mod  { background:var(--thr-mod-bg);  border-color:var(--thr-mod-bd); }
+.thr-high { background:var(--thr-hi-bg);   border-color:var(--thr-hi-bd); }
+.thr-xtra { background:var(--thr-xtra-bg); border-color:var(--thr-xtra-bd); }
+.thr-left { display:flex; align-items:center; gap:9px; font-size:13px; font-weight:500; }
+.thr-swatch { width:9px; height:9px; border-radius:3px; flex-shrink:0; }
+.thr-num  { font-family:'DM Mono',monospace; font-size:14px; font-weight:500; }
+
+.s-table { width:100%; border-collapse:collapse; }
+.s-table th {
+  font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase;
+  color:var(--ink4); padding:5px 8px; text-align:left; border-bottom:1px solid var(--border);
+}
+.s-table td { padding:8px 8px; font-size:13px; border-bottom:1px solid var(--surface2); }
+.s-table td.num { font-family:'DM Mono',monospace; text-align:right; }
+.s-table tr:last-child td { border-bottom:none; }
+.s-dot { width:9px; height:9px; border-radius:50%; display:inline-block; vertical-align:middle; margin-right:5px; }
+
+.pill { display:inline-block; font-size:9.5px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; padding:2px 8px; border-radius:20px; }
+.p-high { background:#FEE2E2; color:#B91C1C; }
+.p-mod  { background:#FFEDD5; color:#C2410C; }
+.p-act  { background:var(--accent-bg); color:var(--accent-text); }
+[data-theme="dark"] .p-high { background:rgba(239,68,68,0.15); color:#F87171; }
+[data-theme="dark"] .p-mod  { background:rgba(249,115,22,0.15); color:#FB923C; }
+
+.p-row { display:flex; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid var(--surface2); font-size:12px; }
+.p-key { color:var(--ink3); }
+.p-val { font-family:'DM Mono',monospace; font-size:11.5px; }
+
+/* ══════════════════════════════════════════
+   METRIC STRIP
+══════════════════════════════════════════ */
+.metric-strip { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
+.metric {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:14px 16px; position:relative; overflow:hidden;
+  transition:box-shadow 0.2s, transform 0.2s, background 0.25s, border-color 0.25s;
+}
+.metric:hover { box-shadow:var(--card-shadow); transform:translateY(-1px); }
+.metric::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  border-radius:10px 10px 0 0;
+}
+.metric.c-accent::before  { background:var(--accent); }
+.metric.c-epi::before     { background:#F59E0B; }
+.metric.c-high::before    { background:#EF4444; }
+.metric.c-teal::before    { background:#0EA5E9; }
+.metric.c-neutral::before { background:var(--ink4); }
+.m-label { font-size:11px; color:var(--ink3); margin-bottom:5px; }
+.m-value { font-family:'DM Mono',monospace; font-size:26px; font-weight:500; line-height:1; letter-spacing:-0.02em; }
+.m-sub   { font-size:11px; color:var(--ink3); margin-top:5px; }
+
+/* ══════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════ */
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:20px 22px;
+  transition:box-shadow 0.2s, background 0.25s, border-color 0.25s;
+}
+.card:hover { box-shadow:var(--card-shadow); }
+.card-top {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  gap:12px; margin-bottom:18px; flex-wrap:wrap;
+}
+.card-title { font-size:14px; font-weight:600; color:var(--ink); letter-spacing:-0.01em; }
+.card-desc  { font-size:11.5px; color:var(--ink3); margin-top:2px; }
+
+.toggles { display:flex; gap:6px; flex-wrap:wrap; }
+.tog {
+  font-size:11px; font-family:'DM Sans',sans-serif; font-weight:500;
+  padding:5px 12px; border-radius:20px; cursor:pointer; white-space:nowrap;
+  border:1px solid var(--tog-off-bd); background:var(--tog-off-bg); color:var(--tog-off-c);
+  transition:all 0.15s;
+}
+.tog.on  { background:var(--tog-on-bg); color:var(--tog-on-c); border-color:var(--tog-on-bd); }
+.tog:hover:not(.on) { background:var(--border); color:var(--ink2); }
+
+.chart-wrap { position:relative; width:100%; height:300px; }
+.chart-wrap canvas { touch-action: pan-y; }
+
+.legend {
+  display:flex; flex-wrap:wrap; gap:12px;
+  margin-top:14px; padding-top:14px; border-top:1px solid var(--border);
+}
+.leg  { display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink3); }
+.leg-ln  { width:20px; height:2px; border-radius:1px; flex-shrink:0; }
+.leg-dsh { width:20px; height:0; border-top:2px dashed currentColor; flex-shrink:0; }
+.leg-box { width:20px; height:10px; border-radius:3px; flex-shrink:0; opacity:0.4; }
+.leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; border:2px solid var(--surface); box-shadow:0 0 0 1px rgba(0,0,0,0.12); }
+
+.grid2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; }
+.footnote { font-size:11px; color:var(--ink4); line-height:1.8; padding:4px 2px; }
+
+/* ── Results table ── */
+.results-table {
+  width:100%; border-collapse:collapse; font-size:13px;
+  table-layout: fixed;
+  min-width: 580px;
+}
+.results-table colgroup col:nth-child(1) { width: 80px; }
+.results-table colgroup col:nth-child(2) { width: 80px; }
+.results-table colgroup col:nth-child(3) { width: 80px; }
+.results-table colgroup col:nth-child(4) { width: 80px; }
+.results-table colgroup col:nth-child(5) { width: 90px; }
+.results-table colgroup col:nth-child(6) { width: auto; min-width: 180px; }
+
+.results-table thead tr {
+  border-bottom: 2px solid var(--border2);
+}
+.results-table th {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink4);
+  padding: 8px 14px; background: var(--surface2);
+}
+.results-table th:nth-child(1) { text-align: left; }
+.results-table th:nth-child(2),
+.results-table th:nth-child(3),
+.results-table th:nth-child(4),
+.results-table th:nth-child(5) { text-align: right; }
+.results-table th:nth-child(6) { text-align: left; padding-left: 16px; }
+
+.results-table tbody tr { border-bottom: 1px solid var(--border); }
+.results-table tbody tr:last-child { border-bottom: none; }
+.results-table tbody tr:nth-child(odd) td { background: var(--surface); }
+.results-table tbody tr:nth-child(even) td { background: var(--surface2); }
+.results-table tbody tr:hover td { background: rgba(77,148,255,0.07) !important; }
+
+.results-table td {
+  padding: 10px 14px; vertical-align: middle;
+  font-size: 13px; overflow: hidden; text-overflow: ellipsis;
+}
+.results-table td:nth-child(1) { font-weight: 600; text-align: left; color: var(--ink); }
+.results-table td:nth-child(2),
+.results-table td:nth-child(3),
+.results-table td:nth-child(4),
+.results-table td:nth-child(5) { font-family: 'DM Mono', monospace; text-align: right; }
+.results-table td:nth-child(6) { text-align: left; padding-left: 16px; }
+
+.pos-badge { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.pathogen-tag {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px; margin: 1px 2px; white-space: nowrap;
+}
+.tag-infA  { background: rgba(56,189,248,0.15);  color: #38BDF8; }
+.tag-infB  { background: rgba(192,132,252,0.15); color: #C084FC; }
+.tag-cov2  { background: rgba(244,63,94,0.15);   color: #F87171; }
+.tag-none  { background: var(--surface2); color: var(--ink4); border: 1px solid var(--border); }
+
+.table-scroll-hint {
+  display: none;
+  font-size: 10px; color: var(--ink4); text-align: center;
+  margin-top: 8px; letter-spacing: 0.04em;
+}
+@media (max-width: 720px) {
+  .table-scroll-hint { display: block; }
+}
+
+/* ── Facility section ── */
+.section-divider {
+  display:flex; align-items:center; gap:12px; margin-top:4px;
+}
+.section-label {
+  font-size:10px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--ink4); white-space:nowrap;
+}
+.section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.fac-strip {
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:10px;
+}
+.fac-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:12px 14px;
+  border-top:3px solid transparent;
+  transition:box-shadow 0.2s,transform 0.2s,background 0.25s;
+  position:relative; overflow:hidden;
+}
+.fac-card:hover { box-shadow:var(--card-shadow); transform:translateY(-1px); }
+.fac-name  { font-size:11px; font-weight:600; color:var(--ink); margin-bottom:8px; line-height:1.3; min-height:28px; }
+.fac-stat  { margin-bottom:5px; }
+.fac-stat-val  { font-family:'DM Mono',monospace; font-size:18px; font-weight:500; line-height:1; }
+.fac-stat-lbl  { font-size:10px; color:var(--ink3); margin-top:2px; }
+.fac-row   { display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+.fac-mini  { text-align:center; }
+.fac-mini-val { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; color:var(--ink2); }
+.fac-mini-lbl { font-size:9.5px; color:var(--ink4); margin-top:1px; }
+
+/* ── Heatmap ── */
+.heatmap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.heatmap-grid {
+  display:grid;
+  grid-template-columns: 110px repeat(13, 46px);
+  gap:3px;
+  min-width: 720px;
+  width: max-content;
+}
+.hm-header {
+  font-size:10px; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; color:var(--ink4);
+  padding:4px 2px; text-align:center;
+}
+.hm-header.fac-col { text-align:left; }
+.hm-label {
+  font-size:12px; font-weight:600; color:var(--ink2);
+  padding:6px 8px 6px 0;
+  display:flex; align-items:center;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.hm-cell {
+  border-radius:5px;
+  height:40px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:11px; font-weight:600;
+  line-height:1;
+  transition:transform 0.12s, box-shadow 0.12s;
+  cursor:default; position:relative;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.hm-cell:hover { transform:scale(1.12); z-index:2; box-shadow:0 3px 10px rgba(0,0,0,0.35); }
+.hm-cell.null-cell { background:var(--surface2) !important; color:var(--ink4) !important; }
+.heatmap-legend {
+  display:flex; align-items:center; gap:8px;
+  margin-top:12px; font-size:11px; color:var(--ink3);
+}
+.hm-legend-bar {
+  flex:1; height:8px; border-radius:4px; max-width:200px;
+}
+.hm-threshold-note {
+  font-size:10.5px; color:var(--ink4); margin-top:8px;
+  display:flex; gap:16px; flex-wrap:wrap;
+}
+
+/* ── Heatmap reference table ── */
+.hm-ref-wrap {
+  margin-top:16px; padding-top:14px;
+  border-top:1px solid var(--border);
+}
+.hm-ref-title {
+  font-size:11px; font-weight:600; color:var(--ink3);
+  letter-spacing:0.04em; margin-bottom:10px;
+  text-transform:uppercase;
+}
+.hm-ref-table {
+  width:100%; border-collapse:collapse;
+  font-size:11.5px; min-width:540px;
+}
+.hm-ref-table th {
+  font-size:10px; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; color:var(--ink4);
+  padding:5px 10px; text-align:left;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.hm-ref-table td {
+  padding:7px 10px; border-bottom:1px solid var(--surface2);
+  font-size:11.5px; white-space:nowrap;
+}
+.hm-ref-table td:not(:first-child) {
+  font-family:'DM Mono',monospace; font-size:11px;
+}
+.hm-ref-table tr:last-child td { border-bottom:none; }
+.hm-ref-table tr:hover td { background:var(--surface2); }
+.hm-ref-note {
+  font-size:10px; color:var(--ink4); margin-top:8px;
+  font-style:italic; line-height:1.6;
+}
+
+/* ══════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════ */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+
+/* Large: shrink sidebar a bit, tighten metric strip */
+@media (max-width:1100px) {
+  .shell { grid-template-columns:220px minmax(0,1fr); }
+  .sb-group { padding:16px 14px 4px; }
+  .metric-strip { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .m-value { font-size:22px; }
+  .fac-strip { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+
+/* Medium: narrow sidebar, 2-col metrics, stack bottom grid */
+@media (max-width:900px) {
+  .shell { grid-template-columns:196px minmax(0,1fr); }
+  .main { padding:14px 16px 20px; gap:14px; }
+  .metric-strip { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .fac-strip { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .grid2 { grid-template-columns:minmax(0,1fr); }
+  .chart-wrap { height:240px; }
+  .card { padding:16px; }
+  .card-top { margin-bottom:12px; }
+  .h-sub { display:none; }
+  .badge-green { display:none; }
+  .toggles { gap:4px; }
+  .tog { font-size:10px; padding:4px 9px; }
+}
+
+/* Compact medium: hide date in header */
+@media (max-width:820px) {
+  #hdr-date { display:none; }
+  .shell { grid-template-columns:180px minmax(0,1fr); }
+}
+
+/* Mobile: stack panels, show tab bar */
+@media (max-width:720px) {
+  .shell { grid-template-columns:1fr; height:auto; overflow:visible; }
+  .sidebar { border-right:none; border-bottom:1px solid var(--border); display:none; overflow-x:hidden; }
+  .sidebar.mob-show { display:block; }
+  .main { display:none; padding:14px; }
+  .main.mob-show { display:flex; }
+  .mob-tabs { display:flex; }
+  .metric-strip { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .fac-strip { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid2 { grid-template-columns:minmax(0,1fr); }
+  .chart-wrap { height:220px; }
+  .header { padding:0 14px; }
+  .badge-green { display:none; }
+
+  /* Card header stacks vertically on mobile */
+  .card-top { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:12px; }
+  .card-title { font-size:13px; }
+  .card-desc  { font-size:11px; }
+
+  /* Toggles wrap tightly */
+  .toggles { gap:5px; width:100%; }
+  .tog { font-size:10px; padding:4px 10px; flex-shrink:0; }
+
+  /* Legend — smaller text, tighter gaps, 2 items per row */
+  .legend { gap:8px 14px; margin-top:10px; padding-top:10px; }
+  .leg { font-size:10.5px; gap:5px; }
+  .leg-ln  { width:16px; }
+  .leg-dsh { width:16px; }
+  .leg-box { width:16px; height:8px; }
+  .leg-dot { width:8px; height:8px; }
+}
+
+/* Small mobile */
+@media (max-width:420px) {
+  .m-value { font-size:20px; }
+  .tog { font-size:10px; padding:4px 8px; }
+  .card { padding:14px 12px; }
+  .legend { gap:8px; }
+  .leg { font-size:10.5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="h-left">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16"><polyline points="1,12 5,7 8,9 12,4 15,6"/></svg>
+    </div>
+    <div>
+      <div class="h-title">ILI Surveillance</div>
+      <div class="h-sub">Pejabat Kesihatan Kawasan Tawau · Sabah, Malaysia</div>
+    </div>
+  </div>
+  <div class="h-right">
+    <span class="badge badge-green"><span class="live-dot"></span>Season 2025/2026</span>
+    <span class="badge badge-blue">WHO GIP</span>
+    <span style="font-size:11px;color:var(--ink3);white-space:nowrap;" id="hdr-date">2026-04-08</span>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <span id="themeIcon">☀️</span>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE TABS -->
+<div class="mob-tabs">
+  <button class="mob-tab" onclick="showMobView('sidebar',this)">Overview</button>
+  <button class="mob-tab active" onclick="showMobView('main',this)">Charts</button>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sb-group"><div class="sb-heading">Current status</div></div>
+    <div class="status-hero fade-up d1">
+      <div class="sh-row">
+        <span class="sh-label" id="sb-weekLabel">Week — · Observed</span>
+        <span class="sh-val"   id="sb-obsVal">—</span>
+      </div>
+      <div class="sh-2row">
+        <span style="font-size:12px;color:var(--ink3);">3-wk smoothed <strong id="sb-smoVal" style="font-family:'DM Mono',monospace;color:var(--ink2)">—</strong></span>
+        <span class="sh-tag" id="sb-statusTag">—</span>
+      </div>
+    </div>
+
+    <div class="sb-group fade-up d2">
+      <div class="sb-heading">Intensity thresholds</div>
+      <div class="thr-list">
+        <div class="thr-item" style="background:rgba(76,175,80,0.1);border-color:rgba(76,175,80,0.3);">
+          <span class="thr-left"><span class="thr-swatch" style="background:#4CAF50"></span>Below seasonal threshold</span>
+          <span class="thr-num" style="color:#4CAF50">&lt; <span id="thr-epi-val">—</span></span>
+        </div>
+        <div class="thr-item thr-epi">
+          <span class="thr-left"><span class="thr-swatch" style="background:#F59E0B"></span>Epidemic (Low)</span>
+          <span class="thr-num" id="thr-epi-val2" style="color:#F59E0B">—</span>
+        </div>
+        <div class="thr-item thr-mod">
+          <span class="thr-left"><span class="thr-swatch" style="background:#F97316"></span>Moderate</span>
+          <span class="thr-num" id="thr-mod-val" style="color:#F97316">—</span>
+        </div>
+        <div class="thr-item thr-high">
+          <span class="thr-left"><span class="thr-swatch" style="background:#EF4444"></span>High</span>
+          <span class="thr-num" id="thr-high-val" style="color:#EF4444">—</span>
+        </div>
+        <div class="thr-item thr-xtra">
+          <span class="thr-left"><span class="thr-swatch" style="background:#8B5CF6"></span>Extraordinary</span>
+          <span class="thr-num" id="thr-xtra-val" style="color:#8B5CF6">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-group fade-up d3">
+      <div class="sb-heading">Historical seasons</div>
+      <table class="s-table">
+        <thead><tr><th>Season</th><th style="text-align:right">Pk wk</th><th style="text-align:right">Peak</th><th>Level</th></tr></thead>
+        <tbody id="sb-seasonsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="sb-group fade-up d4">
+      <div class="sb-heading">Model parameters</div>
+      <div>
+        <div class="p-row"><span class="p-key">Model</span><span class="p-val">One Wave</span></div>
+        <div class="p-row"><span class="p-key">Orientation</span><span class="p-val">Calendar yr</span></div>
+        <div class="p-row"><span class="p-key">Epi threshold</span><span class="p-val">Median</span></div>
+        <div class="p-row"><span class="p-key">Smoothing</span><span class="p-val">3-week</span></div>
+        <div class="p-row"><span class="p-key">CI Moderate</span><span class="p-val">40th pct</span></div>
+        <div class="p-row"><span class="p-key">CI High</span><span class="p-val">90th pct</span></div>
+        <div class="p-row"><span class="p-key">CI Extraordinary</span><span class="p-val">97.5th pct</span></div>
+        <div class="p-row"><span class="p-key">Distribution</span><span class="p-val">Normal (z)</span></div>
+        <div class="p-row" style="border:none"><span class="p-key">Excluded</span><span class="p-val">2009 H1N1</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main mob-show" id="main">
+
+    <div class="metric-strip fade-up d1">
+      <div class="metric c-accent">
+        <div class="m-label">Average curve peak</div>
+        <div class="m-value" id="m-avgPeak" style="color:var(--ink)">—</div>
+        <div class="m-sub"  id="m-avgPeakSub">—</div>
+      </div>
+      <div class="metric c-teal">
+        <div class="m-label">2026 peak so far</div>
+        <div class="m-value" id="m-curPeak" style="color:var(--accent)">—</div>
+        <div class="m-sub"  id="m-curPeakSub">—</div>
+      </div>
+      <div class="metric c-epi">
+        <div class="m-label">Weeks above epidemic</div>
+        <div class="m-value" id="m-aboveEpi" style="color:#F59E0B">—</div>
+        <div class="m-sub"  id="m-aboveEpiSub">—</div>
+      </div>
+      <div class="metric c-neutral">
+        <div class="m-label">Baseline seasons</div>
+        <div class="m-value" id="m-seasons" style="color:var(--ink)">—</div>
+        <div class="m-sub"  id="m-seasonsSub">—</div>
+      </div>
+      <div class="metric c-high">
+        <div class="m-label">Peak week range</div>
+        <div class="m-value" id="m-peakRange" style="color:#EF4444">—</div>
+        <div class="m-sub"  id="m-peakRangeSub">—</div>
+      </div>
+    </div>
+
+    <div class="card fade-up d2">
+      <div class="card-top">
+        <div>
+          <div class="card-title">Average Curve · Season 2025/2026</div>
+          <div class="card-desc">Historic baseline (2022–2025) with current season overlay and intensity thresholds</div>
+        </div>
+        <div class="toggles">
+          <button class="tog on" onclick="tog('ci',this)">CI band</button>
+          <button class="tog on" onclick="tog('smooth',this)">Smoothed</button>
+          <button class="tog on" onclick="tog('thr',this)">Thresholds</button>
+          <button class="tog on" onclick="tog('peaks',this)">Peaks</button>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+      <div class="legend">
+        <span class="leg"><span class="leg-ln" id="leg-avg"></span>Avg curve</span>
+        <span class="leg"><span class="leg-box" style="background:#4D94FF"></span>90% CI</span>
+        <span class="leg"><span class="leg-ln" style="background:#4D94FF"></span>2026 obs.</span>
+        <span class="leg"><span class="leg-dsh" style="color:rgba(217,59,159,0.6)"></span>2026 smoothed</span>
+        <span class="leg"><span class="leg-dot" style="background:#0EA5E9"></span>2022</span>
+        <span class="leg"><span class="leg-dot" style="background:#F59E0B"></span>2023</span>
+        <span class="leg"><span class="leg-dot" style="background:#10B981"></span>2024</span>
+        <span class="leg"><span class="leg-dot" style="background:#F43F5E"></span>2025</span>
+        <span class="leg"><span class="leg-ln" style="background:#F59E0B"></span>Epidemic</span>
+        <span class="leg"><span class="leg-ln" style="background:#F97316"></span>Moderate</span>
+        <span class="leg"><span class="leg-ln" style="background:#EF4444"></span>High</span>
+        <span class="leg"><span class="leg-ln" style="background:#8B5CF6"></span>Extraordinary</span>
+      </div>
+    </div>
+
+    <div class="grid2 fade-up d3">
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">2026 Weekly Values</div>
+            <div class="card-desc">Weeks 1–13 vs epidemic threshold</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:210px;"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">Season Peak Comparison</div>
+            <div class="card-desc">2022–2025 peak values with intensity bands</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:210px;"><canvas id="seasonChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── Facility Breakdown ── -->
+    <div class="section-divider fade-up d4">
+      <span class="section-label">Health Facility Breakdown · 2026</span>
+    </div>
+
+    <!-- Facility summary cards -->
+    <div class="fac-strip fade-up d4" id="facStrip"></div>
+
+    <!-- Facility trend chart -->
+    <div class="card fade-up d5">
+      <div class="card-top">
+        <div>
+          <div class="card-title">ILI Activity by Health Facility</div>
+          <div class="card-desc">Weeks 1–13 · Klinik Kesihatan, Tawau District</div>
+        </div>
+        <div class="toggles">
+          <button class="tog on"  id="fbt-rate"  onclick="switchFacView('rate',this)">ILI Rate %</button>
+          <button class="tog"     id="fbt-cases" onclick="switchFacView('cases',this)">Cases</button>
+          <button class="tog"     id="fbt-opd"   onclick="switchFacView('opd',this)">OPD Volume</button>
+        </div>
+      </div>
+
+      <!-- Heatmap (rate view) -->
+      <div id="facHeatmap"></div>
+
+      <!-- Bar chart (cases / OPD view) -->
+      <div id="facBarWrap" style="display:none;">
+        <div style="position:relative;width:100%;height:260px;"><canvas id="facChart"></canvas></div>
+        <div class="legend" id="facLegend" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"></div>
+      </div>
+    </div>
+
+    <!-- ── Clinical Sampling ── -->
+    <div class="section-divider fade-up d4">
+      <span class="section-label">Clinical Sampling · 2026</span>
+    </div>
+
+    <!-- Sampling summary cards -->
+    <div class="metric-strip fade-up d4">
+      <div class="metric c-neutral">
+        <div class="m-label">Total samples</div>
+        <div class="m-value" id="sm-total" style="color:var(--ink)">—</div>
+        <div class="m-sub"  id="sm-total-sub">—</div>
+      </div>
+      <div class="metric c-high">
+        <div class="m-label">Total positives</div>
+        <div class="m-value" id="sm-pos" style="color:#F43F5E">—</div>
+        <div class="m-sub"  id="sm-pos-sub">—</div>
+      </div>
+      <div class="metric c-epi">
+        <div class="m-label">Overall positivity</div>
+        <div class="m-value" id="sm-rate" style="color:#F59E0B">—</div>
+        <div class="m-sub"  id="sm-rate-sub">—</div>
+      </div>
+      <div class="metric c-teal">
+        <div class="m-label">Influenza A</div>
+        <div class="m-value" id="sm-infA" style="color:#38BDF8">—</div>
+        <div class="m-sub"  id="sm-infA-sub">—</div>
+      </div>
+      <div class="metric" style="border-top-color:#C084FC">
+        <div class="m-label">Influenza B</div>
+        <div class="m-value" id="sm-infB" style="color:#C084FC">—</div>
+        <div class="m-sub"  id="sm-infB-sub">—</div>
+      </div>
+      <div class="metric" style="border-top-color:#F43F5E">
+        <div class="m-label">SARS-CoV-2</div>
+        <div class="m-value" id="sm-cov2" style="color:#F43F5E">—</div>
+        <div class="m-sub"  id="sm-cov2-sub">—</div>
+      </div>
+      <div class="metric" style="border-top-color:var(--ink4)">
+        <div class="m-label">Untyped positive</div>
+        <div class="m-value" id="sm-untyped" style="color:var(--ink3)">—</div>
+        <div class="m-sub"  id="sm-untyped-sub">—</div>
+      </div>
+    </div>
+
+    <!-- Sampling charts row -->
+    <div class="grid2 fade-up d5">
+
+      <!-- Results chart -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">Sample Results by Week</div>
+            <div class="card-desc">Positive / negative counts with positivity rate %</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:230px;"><canvas id="sampleChart"></canvas></div>
+        <div class="legend" style="margin-top:10px;padding-top:10px;">
+          <span class="leg"><span class="leg-ln" style="background:#4A5568;height:8px;border-radius:2px;opacity:0.6;"></span>Negative</span>
+          <span class="leg"><span class="leg-ln" style="background:#F43F5E;height:8px;border-radius:2px;"></span>Positive</span>
+          <span class="leg"><span class="leg-dsh" style="color:#FBBF24;"></span>Positivity rate %</span>
+        </div>
+      </div>
+
+      <!-- Pathogen breakdown -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">Pathogen Breakdown</div>
+            <div class="card-desc">Positive samples by virus type per week</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:230px;"><canvas id="pathogenChart"></canvas></div>
+        <div class="legend" style="margin-top:10px;padding-top:10px;">
+          <span class="leg"><span class="leg-dot" style="background:#38BDF8;"></span>Influenza A</span>
+          <span class="leg"><span class="leg-dot" style="background:#C084FC;"></span>Influenza B</span>
+          <span class="leg"><span class="leg-dot" style="background:#F43F5E;"></span>SARS-CoV-2</span>
+          <span class="leg"><span class="leg-dot" style="background:#94A3B8;"></span>Untyped</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Results table -->
+    <div class="card fade-up d5">
+      <div class="card-top">
+        <div>
+          <div class="card-title">Weekly Sampling Log</div>
+          <div class="card-desc">Full results with pathogen remarks · 2026 weeks 1–12</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px;">
+        <table class="results-table">
+          <colgroup>
+            <col/><col/><col/><col/><col/><col/>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Samples</th>
+              <th>Negative</th>
+              <th>Positive</th>
+              <th>Positivity</th>
+              <th>Pathogens identified</th>
+            </tr>
+          </thead>
+          <tbody id="sampleTableBody"></tbody>
+        </table>
+      </div>
+      <p class="table-scroll-hint">← Scroll to see pathogens →</p>
+    </div>
+
+    <div class="footnote fade-up d5">
+      Epidemic threshold: median of historic ILI rates (2022–2025). Intensity thresholds derived from 40th / 90th / 97.5th percentile of smoothed historic peaks using normal distribution. 2009 H1N1 pandemic excluded. Parameter: WHO_ACM_Tawau_upload.
+      <br>Source: WHO Global Influenza Programme — Average Curves Shiny App · Pejabat Kesihatan Kawasan Tawau, Sabah Malaysia.
+    </div>
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   MOBILE TOGGLE
+══════════════════════════════════════════ */
+function showMobView(view, btn) {
+  document.querySelectorAll('.mob-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sidebar').classList.toggle('mob-show', view==='sidebar');
+  document.getElementById('main').classList.toggle('mob-show', view==='main');
+}
+
+// Hoisted — prevent temporal dead zone errors when toggleTheme fires before these are assigned
+let facChart     = null;
+let facView      = 'rate';
+let sampleChart  = null;
+let pathogenChart = null;
+
+/* ══════════════════════════════════════════
+   THEME TOGGLE
+══════════════════════════════════════════ */
+let isDark = true;
+
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+  // Update all charts with new theme colors
+  updateChartsTheme();
+}
+
+function getThemeColors() {
+  return isDark
+    ? { grid:'rgba(255,255,255,0.06)', tick:'#4A5568', avgLine:'rgba(230,237,243,0.85)', ciAlpha:'rgba(77,148,255,0.12)', pointBg:'#161B22' }
+    : { grid:'rgba(0,0,0,0.05)',       tick:'#B0BAC8', avgLine:'rgba(15,23,36,0.82)',    ciAlpha:'rgba(0,87,255,0.09)',   pointBg:'#FFFFFF'  };
+}
+
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+const WEEKS = Array.from({length:52},(_,i)=>i+1);
+const AVG   = [12.08,10.34,9.49,9.94,10.81,12.48,13.19,13.29,13.70,13.57,14.05,13.18,13.10,12.35,12.63,12.23,12.49,12.45,12.88,14.70,15.49,17.32,18.06,19.39,18.04,17.54,16.27,15.34,14.23,13.27,13.12,13.32,13.52,13.48,14.57,15.07,15.68,15.23,15.39,15.06,14.88,14.08,14.25,14.64,14.60,14.32,14.00,13.89,15.00,15.35,15.29,14.81];
+const CI_UP = [14.44,14.88,13.88,14.03,14.03,15.81,16.85,18.25,19.30,17.34,17.89,16.63,16.63,15.81,16.36,15.92,15.58,16.04,15.41,17.18,18.13,20.57,21.60,22.52,21.28,20.55,20.05,18.23,17.18,15.52,14.58,15.19,15.41,15.28,16.67,16.51,17.02,15.68,15.99,15.59,15.83,15.31,15.14,15.38,16.04,16.01,16.57,15.84,17.33,15.97,16.30,15.23];
+const OBS   = [11.37,12.74,14.61,14.97,14.77,13.63,12.69,14.00,16.02,14.75,13.91,15.66,15.60,...Array(39).fill(null)];
+const SMO   = [13.32,12.91,14.11,14.78,14.46,13.70,13.44,14.24,14.92,14.89,14.77,15.06,15.63,...Array(39).fill(null)];
+const THR   = {epi:14.135,mod:18.770,high:22.519,xtra:24.176};
+const f52   = v => Array(52).fill(v);
+const PEAKS = [
+  {x:32, y:23.49, s:'2022', c:'#0EA5E9', intensity:'High'},
+  {x:5,  y:19.33, s:'2023', c:'#F59E0B', intensity:'Moderate'},
+  {x:15, y:19.28, s:'2024', c:'#10B981', intensity:'Moderate'},
+  {x:43, y:23.28, s:'2025', c:'#F43F5E', intensity:'High'}
+];
+
+/* ══════════════════════════════════════════
+   SHARED TOOLTIP
+══════════════════════════════════════════ */
+const tipBase = {
+  backgroundColor:'rgba(10,14,23,0.95)',
+  titleColor:'#94A3B8', bodyColor:'#E2E8F0',
+  borderColor:'rgba(255,255,255,0.09)', borderWidth:1,
+  padding:12, cornerRadius:8,
+  titleFont:{size:12,family:"'DM Sans',sans-serif"},
+  bodyFont:{family:"'DM Mono',monospace",size:12}
+};
+
+/* ══════════════════════════════════════════
+   MAIN CHART
+══════════════════════════════════════════ */
+const tc = getThemeColors();
+
+const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
+  type:'line',
+  data:{
+    labels:WEEKS,
+    datasets:[
+      {id:'ciu', data:CI_UP, fill:false, borderColor:'transparent', pointRadius:0, tension:0.4},
+      {id:'cil', data:AVG,   fill:'-1',  backgroundColor:tc.ciAlpha, borderColor:'transparent', pointRadius:0, tension:0.4},
+      {id:'avg', label:'Average curve', data:AVG, borderColor:tc.avgLine, borderWidth:2, pointRadius:0, tension:0.4, fill:false},
+      {id:'smo', label:'2026 smoothed', data:SMO, borderColor:'rgba(217,59,159,0.6)', borderWidth:1.5, borderDash:[5,4], pointRadius:0, tension:0.4, fill:false, spanGaps:false},
+      {id:'obs', label:'2026 observed', data:OBS, borderColor:'#4D94FF', borderWidth:1.5,
+        pointRadius:2.5, pointBackgroundColor:tc.pointBg, pointBorderColor:'#4D94FF', pointBorderWidth:1.5,
+        tension:0.3, fill:false, spanGaps:false},
+      {id:'epi', label:'Epidemic',      data:f52(THR.epi),  borderColor:'#F59E0B', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
+      {id:'mod', label:'Moderate',      data:f52(THR.mod),  borderColor:'#F97316', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
+      {id:'hig', label:'High',          data:f52(THR.high), borderColor:'#EF4444', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
+      {id:'xtr', label:'Extraordinary', data:f52(THR.xtra), borderColor:'#8B5CF6', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
+      {id:'pks', label:'Season peaks', type:'scatter',
+        data:PEAKS.map(p=>({x:p.x,y:p.y})),
+        pointStyle:'circle', pointRadius:9, pointHoverRadius:11,
+        backgroundColor:PEAKS.map(p=>p.c), borderColor:'#FFFFFF', borderWidth:2.5, showLine:false}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{...tipBase,callbacks:{
+        title:i=>`Epidemiological Week ${i[0].label}`,
+        label:item=>{
+          if(item.dataset.id==='ciu'||item.dataset.id==='cil') return null;
+          const v = typeof item.raw==='object'?item.raw.y:item.raw;
+          if(v===null||v===undefined) return null;
+          if(item.dataset.id==='pks') return ` ${PEAKS[item.dataIndex].s} peak: ${(+v).toFixed(1)}`;
+          return ` ${item.dataset.label}: ${(+v).toFixed(1)}`;
+        }
+      }}
+    },
+    scales:{
+      x:{
+        title:{display:true,text:'Epidemiological week',color:tc.tick,font:{size:12,family:"'DM Sans'"}},
+        ticks:{color:tc.tick,font:{size:11,family:"'DM Sans'"},maxRotation:0,autoSkip:false,
+          callback:(v,i)=>(WEEKS[i]===1||WEEKS[i]%5===0)?WEEKS[i]:''},
+        grid:{color:tc.grid}
+      },
+      y:{
+        title:{display:true,text:'ILI consultation rate (%)',color:tc.tick,font:{size:12,family:"'DM Sans'"}},
+        min:7,max:28,
+        ticks:{color:tc.tick,font:{size:11,family:"'DM Sans'"},stepSize:2},
+        grid:{color:tc.grid}
+      }
+    }
+  }
+});
+
+// Adjust peak dot size responsively
+function adjustMainChartMobile() {
+  const isMob = window.innerWidth <= 720;
+  mainChart.data.datasets[4].pointRadius      = isMob ? 1.5 : 2.5;
+  mainChart.data.datasets[4].pointBorderWidth = isMob ? 1   : 1.5;
+  mainChart.data.datasets[9].pointRadius      = isMob ? 5   : 9;
+  mainChart.data.datasets[9].borderWidth      = isMob ? 1.5 : 2.5;
+  mainChart.update('none');
+}
+adjustMainChartMobile();
+window.addEventListener('resize', adjustMainChartMobile);
+
+/* ══════════════════════════════════════════
+   BAR CHART
+══════════════════════════════════════════ */
+const obs13  = OBS.slice(0,13);
+const barClr = obs13.map(v=>v===null?'transparent':v>=THR.mod?'#EF4444':v>=THR.epi?'#F59E0B':'#0EA5E9');
+
+const barChart = new Chart(document.getElementById('barChart').getContext('2d'),{
+  type:'bar',
+  data:{
+    labels:Array.from({length:13},(_,i)=>`W${i+1}`),
+    datasets:[
+      {label:'Observed', data:obs13, backgroundColor:barClr, borderRadius:4, borderSkipped:false},
+      {label:'Epidemic', data:Array(13).fill(THR.epi), type:'line', borderColor:'#F59E0B', borderWidth:1.5, borderDash:[4,3], pointRadius:0, fill:false}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{...tipBase,callbacks:{
+      title:i=>`Week ${i[0].dataIndex+1}`,
+      label:i=>` ${i.dataset.label}: ${(+i.raw).toFixed(1)}`
+    }}},
+    scales:{
+      x:{ticks:{color:tc.tick,font:{size:10,family:"'DM Sans'"}},grid:{color:tc.grid}},
+      y:{min:9,max:20,ticks:{color:tc.tick,font:{size:10,family:"'DM Sans'"},stepSize:2},grid:{color:tc.grid}}
+    }
+  }
+});
+
+/* ══════════════════════════════════════════
+   SEASON CHART
+══════════════════════════════════════════ */
+const seasonChart = new Chart(document.getElementById('seasonChart').getContext('2d'),{
+  type:'bar',
+  data:{
+    labels:['2022','2023','2024','2025'],
+    datasets:[
+      {label:'Peak value',data:[23.49,19.33,19.28,23.28],backgroundColor:PEAKS.map(p=>p.c),borderRadius:5,borderSkipped:false},
+      {label:'Epidemic',data:Array(4).fill(THR.epi),type:'line',borderColor:'#F59E0B',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false},
+      {label:'Moderate',data:Array(4).fill(THR.mod),type:'line',borderColor:'#F97316',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false},
+      {label:'High',    data:Array(4).fill(THR.high),type:'line',borderColor:'#EF4444',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{...tipBase,callbacks:{
+      title:i=>`Season ${i[0].label}`,
+      label:i=>` ${i.dataset.label}: ${(+i.raw).toFixed(1)}`
+    }}},
+    scales:{
+      x:{ticks:{color:tc.tick,font:{size:12,family:"'DM Sans'"}},grid:{color:tc.grid}},
+      y:{min:12,max:26,
+        ticks:{color:tc.tick,font:{size:11,family:"'DM Sans'"},stepSize:2},
+        grid:{color:tc.grid},
+        title:{display:true,text:'ILI consultation rate (%)',color:tc.tick,font:{size:11,family:"'DM Sans'"}}}
+    }
+  }
+});
+
+/* ══════════════════════════════════════════
+   TOGGLE DATASETS
+══════════════════════════════════════════ */
+const layerMap = {ci:[0,1],smooth:[3],thr:[5,6,7,8],peaks:[9]};
+function tog(key,btn){
+  btn.classList.toggle('on');
+  const hide=!btn.classList.contains('on');
+  layerMap[key].forEach(i=>{mainChart.data.datasets[i].hidden=hide;});
+  mainChart.update();
+}
+
+/* ══════════════════════════════════════════
+   UPDATE ALL CHARTS ON THEME CHANGE
+══════════════════════════════════════════ */
+function updateChartsTheme() {
+  const t = getThemeColors();
+
+  // Update main chart theme-sensitive datasets
+  mainChart.data.datasets[1].backgroundColor       = t.ciAlpha;
+  mainChart.data.datasets[2].borderColor           = t.avgLine;
+  mainChart.data.datasets[4].pointBackgroundColor  = t.pointBg;
+
+  // Update facChart point border color (n/a for bar chart, guard anyway)
+  if (facChart && facChart.data.datasets[0]?.pointBorderColor !== undefined) {
+    facChart.data.datasets.forEach(ds => { ds.pointBorderColor = t.pointBg; });
+  }
+  // Update sampleChart point border color
+  if (sampleChart) {
+    sampleChart.data.datasets[2].pointBorderColor = t.pointBg;
+  }
+
+  // Update axes + grid on all charts
+  const allCharts = [mainChart, barChart, seasonChart];
+  if (facChart)      allCharts.push(facChart);
+  if (sampleChart)   allCharts.push(sampleChart);
+  if (pathogenChart) allCharts.push(pathogenChart);
+
+  allCharts.forEach(ch => {
+    Object.values(ch.options.scales).forEach(axis => {
+      if (axis.ticks) axis.ticks.color = t.tick;
+      if (axis.grid)  axis.grid.color  = t.grid;
+      if (axis.title) axis.title.color = t.tick;
+    });
+    ch.update('none');
+  });
+
+  // Update avg curve legend swatch
+  const legAvg = document.getElementById('leg-avg');
+  if (legAvg) legAvg.style.background = t.avgLine;
+}
+
+// ── end of chart setup ──
+
+/* ══════════════════════════════════════════
+   FACILITY DATA
+══════════════════════════════════════════ */
+const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+const FACILITIES = [
+  { name:'KK Apas Balung',      short:'Apas Balung',   color:'#38BDF8',
+    cases:[105,122,134,116,155,145,71,107,122,107,70,72,86],
+    opd:  [665,763,828,778,677,839,374,799,709,702,432,514,490],
+    rate: [15.8,16.0,16.2,14.9,22.9,17.3,19.0,13.4,17.2,15.2,16.2,14.0,17.6],
+    total_c:1412, total_o:8570,
+    thr: { epi:14.8, mod:14.2, high:22.6, xtra:27.0 }, baseline:'2024–2025' },
+  { name:'KK Felda Umas-Umas',  short:'Felda U-U',     color:'#FBBF24',
+    cases:[61,116,116,67,96,77,33,94,87,59,51,34,40],
+    opd:  [461,459,443,445,435,447,245,469,449,399,284,277,297],
+    rate: [13.2,25.3,26.2,15.1,22.1,17.2,13.5,20.0,19.4,14.8,18.0,12.3,13.5],
+    total_c:931, total_o:5110,
+    thr: { epi:27.2, mod:25.5, high:37.6, xtra:47.9 }, baseline:'2024–2025' },
+  { name:'KK Kalabakan',        short:'Kalabakan',     color:'#4ADE80',
+    cases:[59,49,45,57,46,34,28,58,70,48,39,37,25],
+    opd:  [186,215,206,226,192,161,101,212,232,181,178,186,136],
+    rate: [31.7,22.8,21.8,25.2,24.0,21.1,27.7,27.4,30.2,26.5,21.9,19.9,18.4],
+    total_c:595, total_o:2412,
+    thr: { epi:16.9, mod:15.8, high:25.3, xtra:31.8 }, baseline:'2024–2025' },
+  { name:'KK Merotai Besar',    short:'Merotai Besar', color:'#F87171',
+    cases:[37,47,55,91,93,98,27,67,98,73,44,64,64],
+    opd:  [205,495,508,535,541,506,354,608,520,523,316,387,349],
+    rate: [18.0,9.5,10.8,17.0,17.2,19.4,7.6,11.0,18.8,14.0,13.9,16.5,18.3],
+    total_c:858, total_o:5847,
+    thr: { epi:14.3, mod:11.8, high:28.0, xtra:32.8 }, baseline:'2024–2025' },
+  { name:'KK Sungai Tamang',    short:'Sg. Tamang',    color:'#C084FC',
+    cases:[32,38,40,38,33,29,13,14,16,23,17,16,0],
+    opd:  [171,170,186,193,204,208,92,116,122,125,102,83,0],
+    rate: [18.7,22.4,21.5,19.7,16.2,13.9,14.1,12.1,13.1,18.4,16.7,19.3,null],
+    total_c:309, total_o:1772,
+    thr: { epi:29.3, mod:28.0, high:39.4, xtra:44.2 }, baseline:'2024–2025' },
+  { name:'KK Tawau',            short:'KK Tawau',      color:'#FB923C',
+    cases:[455,489,579,656,534,582,298,669,672,588,325,426,441],
+    opd:  [4737,4432,4235,4482,4218,4699,2441,4824,4442,4041,2465,2580,2816],
+    rate: [9.6,11.0,13.7,14.6,12.7,12.4,12.2,13.9,15.1,14.6,13.2,16.5,15.7],
+    total_c:6714, total_o:50412,
+    thr: { epi:12.4, mod:12.0, high:16.8, xtra:20.2 }, baseline:'2024–2025' },
+  { name:'KK Kinabutan',        short:'Kinabutan',     color:'#22D3EE',
+    cases:[18,26,32,45,38,39,14,43,50,69,19,25,36],
+    opd:  [319,427,444,491,469,507,207,485,485,584,285,276,349],
+    rate: [5.6,6.1,7.2,9.2,8.1,7.7,6.8,8.9,10.3,11.8,6.7,9.1,10.3],
+    total_c:454, total_o:5328,
+    thr: { epi:9.2, mod:8.9, high:13.2, xtra:14.5 }, baseline:'2024–2025' }
+];
+
+/* ── Build facility summary cards ── */
+function median(arr) {
+  const s = [...arr].filter(v => v !== null && v !== undefined).sort((a,b) => a-b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 !== 0 ? s[m] : (s[m-1] + s[m]) / 2;
+}
+
+const facStrip = document.getElementById('facStrip');
+FACILITIES.forEach(f => {
+  const medRate  = median(f.rate);
+  const validRates = f.rate.map((r,i) => ({r,i})).filter(d => d.r !== null);
+  const peakWk   = FAC_WEEKS[validRates.reduce((best,d) => d.r > best.r ? d : best, validRates[0]).i];
+  facStrip.innerHTML += `
+    <div class="fac-card" style="border-top-color:${f.color}">
+      <div class="fac-name">${f.name}</div>
+      <div class="fac-stat">
+        <div class="fac-stat-val" style="color:${f.color}">${medRate.toFixed(1)}%</div>
+        <div class="fac-stat-lbl">median ILI rate</div>
+      </div>
+      <div class="fac-row">
+        <div class="fac-mini">
+          <div class="fac-mini-val">${f.total_c.toLocaleString()}</div>
+          <div class="fac-mini-lbl">cases</div>
+        </div>
+        <div class="fac-mini">
+          <div class="fac-mini-val">${f.total_o.toLocaleString()}</div>
+          <div class="fac-mini-lbl">OPD</div>
+        </div>
+        <div class="fac-mini">
+          <div class="fac-mini-val">Wk ${peakWk}</div>
+          <div class="fac-mini-lbl">peak</div>
+        </div>
+      </div>
+    </div>`;
+});
+
+/* ── Build facility legend (for bar chart views) ── */
+const facLegend = document.getElementById('facLegend');
+FACILITIES.forEach(f => {
+  facLegend.innerHTML += `
+    <span class="leg">
+      <span class="leg-ln" style="background:${f.color};height:10px;border-radius:2px;width:12px;"></span>
+      ${f.short}
+    </span>`;
+});
+
+/* ── Facility-specific heat colour ── */
+function heatColor(rate, fac) {
+  if (rate === null || rate === undefined) return null;
+  const t = fac ? fac.thr : THR;
+  if (rate >= t.xtra) return { bg:'#7B3FA0', fg:'#fff',    level:'Extraordinary' };
+  if (rate >= t.high) return { bg:'#EF0000', fg:'#fff',    level:'High' };
+  if (rate >= t.mod)  return { bg:'#E07A30', fg:'#fff',    level:'Moderate' };
+  if (rate >= t.epi)  return { bg:'#FFFF00', fg:'#1a1a1a', level:'Low' };
+  return                     { bg:'#4CAF50', fg:'#1a1a1a', level:'Below seasonal threshold' };
+}
+
+/* ── Build heatmap ── */
+function buildHeatmap() {
+  const hm = document.getElementById('facHeatmap');
+  const weeks = FAC_WEEKS;
+
+  let html = `<div class="heatmap"><div class="heatmap-grid">`;
+
+  // Header row
+  html += `<div class="hm-header fac-col">Facility</div>`;
+  weeks.forEach(w => { html += `<div class="hm-header">W${w}</div>`; });
+
+  // Data rows — colour relative to each facility's own threshold
+  FACILITIES.forEach(f => {
+    html += `<div class="hm-label" title="${f.name}">${f.short}</div>`;
+    f.rate.forEach((r, i) => {
+      const c = heatColor(r, f);
+      if (!c) {
+        html += `<div class="hm-cell null-cell">—</div>`;
+      } else {
+        const tip = `${f.name} · Week ${weeks[i]}\nRate: ${r.toFixed(1)}% → ${c.level}\n─\nFacility thresholds (2024–25)\nEpidemic: ${f.thr.epi}%  Moderate: ${f.thr.mod}%\nHigh: ${f.thr.high}%  Extraordinary: ${f.thr.xtra}%`;
+        html += `<div class="hm-cell" style="background:${c.bg};color:${c.fg};" title="${tip}">${r.toFixed(1)}</div>`;
+      }
+    });
+  });
+
+  html += `</div>`;
+
+  // Colour legend
+  html += `
+    <div class="hm-threshold-note" style="margin-top:12px;">
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#4CAF50;vertical-align:middle;margin-right:4px;"></span>Below seasonal threshold</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#FFFF00;vertical-align:middle;margin-right:4px;"></span>Low</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#E07A30;vertical-align:middle;margin-right:4px;"></span>Moderate</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#EF0000;vertical-align:middle;margin-right:4px;"></span>High</span>
+      <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#7B3FA0;vertical-align:middle;margin-right:4px;"></span>Extraordinary</span>
+      <span style="color:var(--ink4);font-style:italic;">Colours based on facility-specific thresholds</span>
+    </div>`;
+
+  // Facility threshold reference table
+  html += `
+    <div class="hm-ref-wrap">
+      <div class="hm-ref-title">Facility-specific thresholds · 2024–2025 baseline</div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <table class="hm-ref-table">
+          <thead>
+            <tr>
+              <th>Facility</th>
+              <th>Baseline</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#4CAF50;margin-right:4px;vertical-align:middle;"></span>Below seasonal threshold</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#FFFF00;margin-right:4px;vertical-align:middle;"></span>Low (epidemic)</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#E07A30;margin-right:4px;vertical-align:middle;"></span>Moderate</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#EF0000;margin-right:4px;vertical-align:middle;"></span>High</th>
+              <th><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#7B3FA0;margin-right:4px;vertical-align:middle;"></span>Extraordinary</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+  FACILITIES.forEach(f => {
+    html += `
+            <tr>
+              <td style="display:flex;align-items:center;gap:7px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:${f.color};flex-shrink:0;display:inline-block;"></span>
+                ${f.short}
+              </td>
+              <td style="color:var(--ink3);font-style:italic;">${f.baseline}</td>
+              <td>&lt; ${f.thr.epi.toFixed(1)}%</td>
+              <td>${f.thr.epi.toFixed(1)}–${f.thr.mod.toFixed(1)}%</td>
+              <td>${f.thr.mod.toFixed(1)}–${f.thr.high.toFixed(1)}%</td>
+              <td>${f.thr.high.toFixed(1)}–${f.thr.xtra.toFixed(1)}%</td>
+              <td>≥ ${f.thr.xtra.toFixed(1)}%</td>
+            </tr>`;
+  });
+
+  html += `
+          </tbody>
+        </table>
+      </div>
+      <p class="hm-ref-note">Thresholds derived from 2024–2025 weekly ILI consultation rates per facility. Epidemic threshold = median; Moderate/High/Extraordinary = 40th/90th/97.5th percentile of combined 2024–2025 weekly rates.</p>
+    </div>
+  </div>`;
+
+  hm.innerHTML = html;
+}
+buildHeatmap();
+
+/* ── Build bar chart for Cases / OPD views ── */
+facView = 'rate';
+const facLabels = FAC_WEEKS.map(w => `W${w}`);
+
+function getFacDatasets(view) {
+  return FACILITIES.map(f => ({
+    label: f.short,
+    data: view === 'cases' ? f.cases : f.opd,
+    backgroundColor: f.color + 'CC',
+    borderColor: f.color,
+    borderWidth: 1,
+    borderRadius: 3,
+    borderSkipped: false
+  }));
+}
+
+const facChartCfg = {
+  type: 'bar',
+  data: { labels: facLabels, datasets: getFacDatasets('cases') },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        ...tipBase,
+        callbacks: {
+          title: i => `Epidemiological Week ${i[0].label.replace('W','')}`,
+          label: item => {
+            const v = item.raw;
+            if (v === null || v === undefined || v === 0) return null;
+            return ` ${item.dataset.label}: ${(+v).toLocaleString()}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Epidemiological week', color: tc.tick, font: { size: 11, family:"'DM Sans'" } },
+        ticks: { color: tc.tick, font: { size: 10, family:"'DM Sans'" } },
+        grid: { color: tc.grid }
+      },
+      y: {
+        title: { display: true, text: 'Case count', color: tc.tick, font: { size: 11, family:"'DM Sans'" } },
+        ticks: { color: tc.tick, font: { size: 10, family:"'DM Sans'" } },
+        grid: { color: tc.grid }
+      }
+    }
+  }
+};
+
+facChart = new Chart(document.getElementById('facChart').getContext('2d'), facChartCfg);
+
+function switchFacView(view, btn) {
+  facView = view;
+  document.querySelectorAll('[id^="fbt-"]').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+
+  const heatmap = document.getElementById('facHeatmap');
+  const barWrap = document.getElementById('facBarWrap');
+
+  if (view === 'rate') {
+    heatmap.style.display = '';
+    barWrap.style.display = 'none';
+  } else {
+    heatmap.style.display = 'none';
+    barWrap.style.display = '';
+    facChart.data.datasets = getFacDatasets(view);
+    const yLabels = { cases: 'Case count', opd: 'OPD visits' };
+    facChart.options.scales.y.title.text = yLabels[view];
+    facChart.update();
+  }
+}
+
+// All charts ready — apply initial dark theme colours
+updateChartsTheme();
+
+/* ══════════════════════════════════════════
+   CLINICAL SAMPLING DATA
+══════════════════════════════════════════ */
+const SAMPLE_DATA = [
+  {wk:1,  samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
+  {wk:2,  samples:15, neg:14, pos:1,  yield:6.7,    remarks:'Influenza A'},
+  {wk:3,  samples:15, neg:14, pos:1,  yield:6.7,    remarks:'Influenza A'},
+  {wk:4,  samples:15, neg:13, pos:2,  yield:13.3,   remarks:'Influenza A, SARS-CoV-2'},
+  {wk:5,  samples:15, neg:14, pos:1,  yield:6.7,    remarks:'Influenza B'},
+  {wk:6,  samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
+  {wk:7,  samples:13, neg:11, pos:2,  yield:15.4,   remarks:'SARS-CoV-2 (2)'},
+  {wk:8,  samples:15, neg:13, pos:2,  yield:13.3,   remarks:'Influenza A, SARS-CoV-2'},
+  {wk:9,  samples:15, neg:12, pos:3,  yield:20.0,   remarks:'Influenza A, Influenza B (2)'},
+  {wk:10, samples:10, neg:10, pos:0,  yield:0,      remarks:'—'},
+  {wk:11, samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
+  {wk:12, samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
+];
+
+// Per-week pathogen counts [InfA, InfB, CoV2, Untyped]
+const PATH_BY_WEEK = [
+  [0,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,1,0],[0,1,0,0],
+  [0,0,0,0],[0,0,2,0],[1,0,1,0],[1,2,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]
+];
+
+const S_WEEKS  = SAMPLE_DATA.map(d=>`W${d.wk}`);
+const S_NEG    = SAMPLE_DATA.map(d=>d.neg);
+const S_POS    = SAMPLE_DATA.map(d=>d.pos);
+const S_RATE   = SAMPLE_DATA.map(d=>d.yield);
+
+/* ── Sample results chart ── */
+sampleChart = new Chart(document.getElementById('sampleChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: S_WEEKS,
+    datasets: [
+      { label:'Negative', data:S_NEG, backgroundColor:'rgba(74,85,104,0.55)', borderRadius:3, borderSkipped:false, stack:'s' },
+      { label:'Positive', data:S_POS, backgroundColor:'rgba(244,63,94,0.85)', borderRadius:3, borderSkipped:false, stack:'s' },
+      { label:'Positivity %', data:S_RATE, type:'line', borderColor:'#FBBF24', borderWidth:2,
+        borderDash:[4,3], pointRadius:4, pointBackgroundColor:'#FBBF24',
+        pointBorderColor: isDark ? '#161B22' : '#FFFFFF',
+        pointBorderWidth:2, fill:false, yAxisID:'yRate', tension:0.3 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:'index', intersect:false },
+    plugins:{ legend:{display:false}, tooltip:{ ...tipBase, callbacks:{
+      title:i=>`Week ${i[0].label.replace('W','')}`,
+      label:i=>{
+        if(i.dataset.label==='Positivity %') return ` Positivity rate: ${(+i.raw).toFixed(1)}%`;
+        return ` ${i.dataset.label}: ${i.raw}`;
+      }
+    }}},
+    scales:{
+      x:{ stacked:true, ticks:{color:tc.tick,font:{size:10,family:"'DM Sans'"}}, grid:{color:tc.grid} },
+      y:{ stacked:true, ticks:{color:tc.tick,font:{size:10,family:"'DM Sans'"}}, grid:{color:tc.grid},
+          title:{display:true,text:'Count',color:tc.tick,font:{size:10,family:"'DM Sans'"}} },
+      yRate:{ position:'right', min:0, max:25,
+        ticks:{color:'#FBBF24',font:{size:10,family:"'DM Sans'"},callback:v=>`${v}%`},
+        grid:{display:false},
+        title:{display:true,text:'Positivity %',color:'#FBBF24',font:{size:10,family:"'DM Sans'"}} }
+    }
+  }
+});
+
+/* ── Pathogen breakdown chart ── */
+pathogenChart = new Chart(document.getElementById('pathogenChart').getContext('2d'), {
+  type:'bar',
+  data:{
+    labels: S_WEEKS,
+    datasets:[
+      { label:'Influenza A', data:PATH_BY_WEEK.map(w=>w[0]), backgroundColor:'rgba(56,189,248,0.8)',  borderRadius:3, borderSkipped:false, stack:'p' },
+      { label:'Influenza B', data:PATH_BY_WEEK.map(w=>w[1]), backgroundColor:'rgba(192,132,252,0.8)', borderRadius:3, borderSkipped:false, stack:'p' },
+      { label:'SARS-CoV-2',  data:PATH_BY_WEEK.map(w=>w[2]), backgroundColor:'rgba(244,63,94,0.8)',   borderRadius:3, borderSkipped:false, stack:'p' },
+      { label:'Untyped',     data:PATH_BY_WEEK.map(w=>w[3]), backgroundColor:'rgba(148,163,184,0.6)', borderRadius:3, borderSkipped:false, stack:'p' }
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:'index', intersect:false },
+    plugins:{ legend:{display:false}, tooltip:{ ...tipBase, callbacks:{
+      title:i=>`Week ${i[0].label.replace('W','')}`,
+      label:i=> i.raw > 0 ? ` ${i.dataset.label}: ${i.raw}` : null
+    }}},
+    scales:{
+      x:{ stacked:true, ticks:{color:tc.tick,font:{size:10,family:"'DM Sans'"}}, grid:{color:tc.grid} },
+      y:{ stacked:true, max:4, ticks:{color:tc.tick,font:{size:10,family:"'DM Sans'"},stepSize:1},
+          grid:{color:tc.grid},
+          title:{display:true,text:'Positive samples',color:tc.tick,font:{size:10,family:"'DM Sans'"}} }
+    }
+  }
+});
+
+/* ── Build results table ── */
+const tbody = document.getElementById('sampleTableBody');
+SAMPLE_DATA.forEach(d => {
+  const rateColor = d.yield >= 15 ? '#F43F5E' : d.yield > 0 ? '#FBBF24' : 'var(--ink4)';
+  const rateTxt   = d.yield > 0 ? `${d.yield.toFixed(1)}%` : '0%';
+
+  // Build pathogen tags
+  let tags = '';
+  if (d.remarks === '—') {
+    tags = `<span class="pathogen-tag tag-none">All negative</span>`;
+  } else {
+    if (d.remarks.includes('Influenza A'))  tags += `<span class="pathogen-tag tag-infA">Influenza A</span>`;
+    if (d.remarks.includes('Influenza B'))  tags += `<span class="pathogen-tag tag-infB">Influenza B</span>`;
+    if (d.remarks.includes('SARS-CoV'))     tags += `<span class="pathogen-tag tag-cov2">SARS-CoV-2</span>`;
+    if (d.remarks.includes('Untyped'))      tags += `<span class="pathogen-tag tag-none">Untyped</span>`;
+  }
+
+  tbody.innerHTML += `
+    <tr>
+      <td>Week ${d.wk}</td>
+      <td>${d.samples}</td>
+      <td style="color:var(--ink3)">${d.neg}</td>
+      <td>
+        <span class="pos-badge" style="color:${d.pos>0?'#F43F5E':'var(--ink4)'}">
+          ${d.pos > 0 ? '▲' : ''} ${d.pos}
+        </span>
+      </td>
+      <td style="color:${rateColor};font-weight:600">${rateTxt}</td>
+      <td>${tags}</td>
+    </tr>`;
+});
+
+/* ══════════════════════════════════════════
+   COMPUTE ALL SUMMARY VALUES FROM DATA
+══════════════════════════════════════════ */
+(function computeAllSummaries() {
+
+  // ── Header date (today) ──────────────────
+  document.getElementById('hdr-date').textContent =
+    new Date().toISOString().slice(0, 10);
+
+  // ── Threshold sidebar values ─────────────
+  document.getElementById('thr-epi-val').textContent  = THR.epi.toFixed(1);
+  document.getElementById('thr-epi-val2').textContent = THR.epi.toFixed(1);
+  document.getElementById('thr-mod-val').textContent  = THR.mod.toFixed(1);
+  document.getElementById('thr-high-val').textContent = THR.high.toFixed(1);
+  document.getElementById('thr-xtra-val').textContent = THR.xtra.toFixed(1);
+
+  // ── Sidebar status (current week) ────────
+  const obsReported = OBS.map((v,i) => v !== null ? {v, wk:i+1} : null).filter(Boolean);
+  const smoReported = SMO.map((v,i) => v !== null ? {v, wk:i+1} : null).filter(Boolean);
+  const latestObs   = obsReported[obsReported.length - 1];
+  const latestSmo   = smoReported[smoReported.length - 1];
+  document.getElementById('sb-weekLabel').textContent = `Week ${latestObs.wk} · Observed`;
+  document.getElementById('sb-obsVal').textContent    = latestObs.v.toFixed(1);
+  document.getElementById('sb-smoVal').textContent    = latestSmo.v.toFixed(1);
+  const statusTag = document.getElementById('sb-statusTag');
+  if (latestObs.v >= THR.high) {
+    statusTag.textContent = 'High intensity'; statusTag.style.background='rgba(239,68,68,0.15)'; statusTag.style.color='#F87171'; statusTag.style.borderColor='rgba(239,68,68,0.3)';
+  } else if (latestObs.v >= THR.mod) {
+    statusTag.textContent = 'Moderate intensity'; statusTag.style.background='rgba(249,115,22,0.15)'; statusTag.style.color='#FB923C'; statusTag.style.borderColor='rgba(249,115,22,0.3)';
+  } else if (latestObs.v >= THR.epi) {
+    statusTag.textContent = 'Above epidemic'; statusTag.style.background='rgba(245,158,11,0.15)'; statusTag.style.color='#FCD34D'; statusTag.style.borderColor='rgba(245,158,11,0.3)';
+  } else {
+    statusTag.textContent = 'Below epidemic'; statusTag.style.background='rgba(16,185,129,0.1)'; statusTag.style.color='#34D399'; statusTag.style.borderColor='rgba(16,185,129,0.2)';
+  }
+
+  // ── Sidebar seasons table ─────────────────
+  const sbTbody = document.getElementById('sb-seasonsBody');
+  PEAKS.forEach(p => {
+    const pillClass = p.intensity === 'High' ? 'p-high' : 'p-mod';
+    sbTbody.innerHTML += `
+      <tr>
+        <td><span class="s-dot" style="background:${p.c}"></span>${p.s}</td>
+        <td class="num">${p.x}</td>
+        <td class="num">${p.y.toFixed(1)}</td>
+        <td><span class="pill ${pillClass}">${p.intensity}</span></td>
+      </tr>`;
+  });
+  sbTbody.innerHTML += `
+    <tr style="opacity:0.5">
+      <td><span class="s-dot" style="background:var(--accent)"></span>2026</td>
+      <td class="num">—</td><td class="num">—</td>
+      <td><span class="pill p-act">Active</span></td>
+    </tr>`;
+
+  // ── Main metric strip ────────────────────
+  // Average curve peak
+  const avgPeakVal = Math.max(...AVG);
+  const avgPeakWk  = AVG.indexOf(avgPeakVal) + 1;
+  document.getElementById('m-avgPeak').textContent    = avgPeakVal.toFixed(1);
+  document.getElementById('m-avgPeakSub').textContent = `Week ${avgPeakWk} · typical season`;
+
+  // 2026 peak so far
+  const curPeakVal = Math.max(...obsReported.map(d => d.v));
+  const curPeakWk  = obsReported.find(d => d.v === curPeakVal).wk;
+  const curLevel   = curPeakVal >= THR.mod ? 'above moderate' : curPeakVal >= THR.epi ? 'above epidemic' : 'below epidemic';
+  document.getElementById('m-curPeak').textContent    = curPeakVal.toFixed(1);
+  document.getElementById('m-curPeakSub').textContent = `Week ${curPeakWk} · ${curLevel}`;
+
+  // Weeks above epidemic threshold
+  const aboveEpiWks = obsReported.filter(d => d.v > THR.epi).map(d => d.wk);
+  document.getElementById('m-aboveEpi').textContent    = aboveEpiWks.length;
+  document.getElementById('m-aboveEpiSub').textContent = aboveEpiWks.length
+    ? `Wks ${aboveEpiWks.join(', ')}`
+    : 'None so far';
+
+  // Baseline seasons
+  const firstSeason = PEAKS[0].s;
+  const lastSeason  = PEAKS[PEAKS.length - 1].s;
+  document.getElementById('m-seasons').textContent    = PEAKS.length;
+  document.getElementById('m-seasonsSub').textContent = `${firstSeason}–${lastSeason} · H1N1 excl.`;
+
+  // Peak week range across historical seasons
+  const peakWeeks = PEAKS.map(p => p.x);
+  const minPkWk   = Math.min(...peakWeeks);
+  const maxPkWk   = Math.max(...peakWeeks);
+  document.getElementById('m-peakRange').textContent    = `${minPkWk}–${maxPkWk}`;
+  document.getElementById('m-peakRangeSub').textContent = 'High seasonal variability';
+
+  // ── Clinical sampling summary ────────────
+  const reported   = SAMPLE_DATA.filter(d => d.samples > 0);
+  const totalSamples = reported.reduce((s,d) => s + d.samples, 0);
+  const totalPos     = reported.reduce((s,d) => s + d.pos, 0);
+  const overallRate  = totalPos / totalSamples * 100;
+  const peakWkSample = reported.reduce((best,d) => d.yield > best.yield ? d : best, reported[0]);
+  const lastWk       = reported[reported.length - 1].wk;
+
+  const infACount    = PATH_BY_WEEK.reduce((s,w) => s + w[0], 0);
+  const infBCount    = PATH_BY_WEEK.reduce((s,w) => s + w[1], 0);
+  const cov2Count    = PATH_BY_WEEK.reduce((s,w) => s + w[2], 0);
+  const untypedCount = PATH_BY_WEEK.reduce((s,w) => s + w[3], 0);
+
+  const weeksWithPathogen = (idx) =>
+    PATH_BY_WEEK.map((w,i) => w[idx] > 0 ? `Wk ${i+1}` : null).filter(Boolean);
+  const fmt = (wks) => wks.length === 0 ? 'None detected'
+    : wks.length === 1 ? `${wks[0]} only`
+    : wks.join(', ');
+
+  document.getElementById('sm-total').textContent     = totalSamples;
+  document.getElementById('sm-total-sub').textContent = `Weeks 1–${lastWk} · wk ${lastWk+1} pending`;
+  document.getElementById('sm-pos').textContent       = totalPos;
+  document.getElementById('sm-pos-sub').textContent   = `Of ${totalSamples} samples tested`;
+  document.getElementById('sm-rate').textContent      = overallRate.toFixed(1) + '%';
+  document.getElementById('sm-rate-sub').textContent  = `Peak Wk ${peakWkSample.wk} · ${peakWkSample.yield.toFixed(1)}%`;
+  document.getElementById('sm-infA').textContent      = infACount;
+  document.getElementById('sm-infA-sub').textContent  = fmt(weeksWithPathogen(0));
+  document.getElementById('sm-infB').textContent      = infBCount;
+  document.getElementById('sm-infB-sub').textContent  = fmt(weeksWithPathogen(1));
+  document.getElementById('sm-cov2').textContent      = cov2Count;
+  document.getElementById('sm-cov2-sub').textContent  = fmt(weeksWithPathogen(2));
+  document.getElementById('sm-untyped').textContent      = untypedCount;
+  document.getElementById('sm-untyped-sub').textContent  = untypedCount > 0
+    ? fmt(weeksWithPathogen(3)) : 'None pending';
+
+})();
+
+/* ══════════════════════════════════════════
+   MOBILE TOOLTIP FIXES
+══════════════════════════════════════════ */
+(function mobileTooltipFix() {
+  const allCharts = () => [mainChart, barChart, seasonChart, facChart, sampleChart, pathogenChart].filter(Boolean);
+
+  // Fix 1 + Fix 3 — on mobile use nearest+intersect mode (deliberate tap only)
+  // and restrict events to exclude touchmove so scrolling doesn't trigger tooltips
+  function applyMobileInteraction() {
+    const isMob = window.innerWidth <= 900;
+    allCharts().forEach(ch => {
+      if (!ch.options.interaction) return;
+      ch.options.interaction.mode      = isMob ? 'nearest' : 'index';
+      ch.options.interaction.intersect = isMob ? true : false;
+      ch.options.events = isMob
+        ? ['click', 'mousemove', 'mouseout', 'touchstart']
+        : ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'];
+      ch.update('none');
+    });
+  }
+  applyMobileInteraction();
+  window.addEventListener('resize', applyMobileInteraction);
+
+  // Fix 2 — pointer-events: none on chart canvases while scrolling or pinching
+  let scrollTimer = null;
+  function disablePointer() {
+    document.querySelectorAll('.chart-wrap canvas').forEach(c => { c.style.pointerEvents = 'none'; });
+  }
+  function enablePointer() {
+    document.querySelectorAll('.chart-wrap canvas').forEach(c => { c.style.pointerEvents = ''; });
+  }
+
+  window.addEventListener('scroll', () => {
+    disablePointer();
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(enablePointer, 300);
+  }, { passive: true });
+
+  document.addEventListener('touchstart', e => {
+    if (e.touches.length >= 2) disablePointer();
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (e.touches.length < 2) setTimeout(enablePointer, 300);
+  }, { passive: true });
+
+  document.querySelectorAll('.chart-wrap canvas').forEach(canvas => {
+    canvas.addEventListener('touchmove', () => {
+      disablePointer();
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(enablePointer, 400);
+    }, { passive: true });
+  });
+})();
+</script>
+</body>
+</html>
