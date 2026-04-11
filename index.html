@@ -790,7 +790,12 @@ body {
 
       <!-- Bar chart (cases / OPD view) -->
       <div id="facBarWrap" style="display:none;">
-        <div style="position:relative;width:100%;height:260px;"><canvas id="facChart"></canvas></div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+          <div style="position:relative;min-width:600px;width:100%;height:260px;">
+            <canvas id="facChart"></canvas>
+          </div>
+        </div>
+        <p class="table-scroll-hint" id="facBarHint">← Scroll to see all weeks →</p>
         <div class="legend" id="facLegend" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"></div>
       </div>
     </div>
