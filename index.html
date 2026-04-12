@@ -211,13 +211,19 @@ body {
   overflow:hidden;
   transition:background 0.25s, border-color 0.25s;
 }
-.sh-body   { padding:12px 14px 10px; }
-.sh-row    { display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
-.sh-label  { font-size:10px; color:var(--status-lbl); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; padding-top:2px; }
-.sh-val    { font-family:'DM Mono',monospace; font-size:32px; font-weight:500; color:var(--accent); line-height:1; flex-shrink:0; }
-.sh-smo    { margin-top:8px; font-size:11px; color:var(--ink3); display:flex; align-items:baseline; gap:5px; }
-.sh-smo strong { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; color:var(--ink2); }
-.sh-tag    {
+.sh-body {
+  padding:12px 14px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.sh-left  { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.sh-label { font-size:10px; color:var(--status-lbl); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; }
+.sh-val   { font-family:'DM Mono',monospace; font-size:36px; font-weight:500; color:var(--accent); line-height:1; flex-shrink:0; }
+.sh-smo   { font-size:12px; color:var(--ink3); display:flex; align-items:baseline; gap:5px; }
+.sh-smo strong { font-family:'DM Mono',monospace; font-size:16px; font-weight:500; color:var(--ink2); }
+.sh-tag   {
   display:block; width:100%;
   font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
   padding:7px 14px; white-space:nowrap; text-align:center;
@@ -601,6 +607,38 @@ body {
   .leg-dsh { width:16px; }
   .leg-box { width:16px; height:8px; }
   .leg-dot { width:8px; height:8px; }
+
+  /* Status hero — compact on mobile */
+  .status-hero { margin:4px 14px 0; }
+  .sh-body  { padding:10px 12px; }
+  .sh-val   { font-size:28px; }
+  .sh-label { font-size:9.5px; }
+  .sh-smo   { font-size:11px; }
+  .sh-smo strong { font-size:13px; }
+  .sh-tag   { font-size:11px; padding:7px 12px; }
+
+  /* Seasons table — full width on mobile */
+  .s-table { width:100%; }
+  .s-table colgroup col:nth-child(1) { width:22%; }
+  .s-table colgroup col:nth-child(2) { width:14%; }
+  .s-table colgroup col:nth-child(3) { width:18%; }
+  .s-table colgroup col:nth-child(4) { width:46%; }
+  .s-table td  { padding:7px 6px; font-size:13.5px; }
+  .s-table th  { padding:5px 6px; font-size:10px; }
+  .s-dot       { width:9px; height:9px; margin-right:5px; }
+  /* Stretch pill to fill Level column */
+  .s-table td:last-child { padding-right:10px; }
+  .s-table td:last-child .pill {
+    display:block; text-align:center;
+    width:100%; box-sizing:border-box;
+  }
+
+  /* Sidebar group padding tighter */
+  .sb-group    { padding:14px 14px 4px; }
+  .thr-item    { padding:8px 10px; }
+  .thr-left    { font-size:12px; }
+  .thr-num     { font-size:13px; }
+  .p-row       { font-size:11px; padding:5px 0; }
 }
 
 /* Small mobile */
@@ -625,11 +663,13 @@ body {
 
   /* Sidebar */
   .sb-heading   { font-size:11px; }
-  .sh-val       { font-size:36px; }
+  .sh-val       { font-size:28px; padding-left:14px; }
   .sh-label     { font-size:11px; }
   .sh-smo       { font-size:13px; }
-  .sh-smo strong { font-size:17px; }
+  .sh-smo strong { font-size:18px; }
   .sh-tag       { font-size:12.5px; padding:9px 16px; }
+  .sh-body      { gap:0; }
+  .sh-left      { flex:1; padding-right:14px; border-right:1px solid var(--status-bd); }
   .thr-left     { font-size:14px; }
   .thr-num      { font-size:15px; }
   .thr-swatch   { width:11px; height:11px; }
@@ -725,14 +765,14 @@ body {
     <div class="sb-group"><div class="sb-heading">Current status</div></div>
     <div class="status-hero fade-up d1">
       <div class="sh-body">
-        <div class="sh-row">
+        <div class="sh-left">
           <span class="sh-label" id="sb-weekLabel">Week — · Observed</span>
-          <span class="sh-val" id="sb-obsVal">—</span>
+          <div class="sh-smo">
+            <span>3-wk smoothed</span>
+            <strong id="sb-smoVal">—</strong>
+          </div>
         </div>
-        <div class="sh-smo">
-          <span>3-wk smoothed</span>
-          <strong id="sb-smoVal">—</strong>
-        </div>
+        <span class="sh-val" id="sb-obsVal">—</span>
       </div>
       <span class="sh-tag" id="sb-statusTag">—</span>
     </div>
