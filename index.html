@@ -1795,7 +1795,7 @@ function updateStatusTagTheme() {
     statusTag.style.background     = dark ? 'rgba(249,115,22,0.18)'   : '#FFEDD5';
     statusTag.style.color          = dark ? '#FB923C'                  : '#9A3412';
     statusTag.style.borderTopColor = dark ? 'rgba(249,115,22,0.35)'   : '#FD8A6C';
-  } else if (statusTag.textContent.includes('epidemic') || statusTag.textContent.includes('Epidemic')) {
+  } else if (statusTag.textContent.includes('Above epidemic') || statusTag.textContent.includes('Above Epidemic')) {
     statusTag.style.background     = dark ? 'rgba(245,158,11,0.18)'   : '#FEF9C3';
     statusTag.style.color          = dark ? '#FCD34D'                  : '#854D0E';
     statusTag.style.borderTopColor = dark ? 'rgba(245,158,11,0.35)'   : '#FDE047';
@@ -1864,7 +1864,7 @@ function computeAllSummaries() {
     statusTag.style.color        = dark ? '#FCD34D'                  : '#854D0E';
     statusTag.style.borderTopColor = dark ? 'rgba(245,158,11,0.35)' : '#FDE047';
   } else {
-    statusTag.textContent = '🟢 Below epidemic';
+    statusTag.textContent = '🟢 Below seasonal threshold';
     statusTag.style.background   = dark ? 'rgba(16,185,129,0.15)'   : '#DCFCE7';
     statusTag.style.color        = dark ? '#34D399'                  : '#166534';
     statusTag.style.borderTopColor = dark ? 'rgba(16,185,129,0.25)' : '#86EFAC';
