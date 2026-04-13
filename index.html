@@ -759,7 +759,7 @@ body {
   <div class="h-right">
     <span class="badge badge-green"><span class="live-dot"></span>Season 2026</span>
     <span class="badge badge-blue">WHO GIP</span>
-    <span style="font-size:11px;color:var(--ink3);white-space:nowrap;" id="hdr-date">2026-04-08</span>
+    <span class="badge" id="hdr-date-badge" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink3);font-size:10px;white-space:nowrap;">Data as of Wk — · —</span>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark mode">
       <span id="themeIcon">☀️</span>
     </button>
@@ -768,8 +768,8 @@ body {
 
 <!-- MOBILE TABS -->
 <div class="mob-tabs">
-  <button class="mob-tab" onclick="showMobView('sidebar',this)">Overview</button>
-  <button class="mob-tab active" onclick="showMobView('main',this)">Charts</button>
+  <button class="mob-tab" onclick="showMobView('sidebar',this)">Status</button>
+  <button class="mob-tab active" onclick="showMobView('main',this)">Data</button>
 </div>
 
 <div class="shell">
@@ -1419,24 +1419,48 @@ function median(arr) {
 const facStrip = document.getElementById('facStrip');
 facStrip.innerHTML = '';
 FACILITIES.forEach(f => {
-  const medRate  = median(f.rate);
   const validRates = f.rate.map((r,i) => ({r,i})).filter(d => d.r !== null);
-  const peakWk   = FAC_WEEKS[validRates.reduce((best,d) => d.r > best.r ? d : best, validRates[0]).i];
+  const peakWk     = FAC_WEEKS[validRates.reduce((best,d) => d.r > best.r ? d : best, validRates[0]).i];
+
+  // Current week = last non-null rate
+  const currEntry  = validRates[validRates.length - 1];
+  const currRate   = currEntry ? currEntry.r : null;
+  const currWk     = currEntry ? FAC_WEEKS[currEntry.i] : null;
+
+  // Previous week
+  const prevEntry  = validRates.length >= 2 ? validRates[validRates.length - 2] : null;
+  const prevRate   = prevEntry ? prevEntry.r : null;
+
+  // Delta label
+  let deltaHtml = '';
+  if (currRate !== null && prevRate !== null) {
+    const pctChange = ((currRate - prevRate) / prevRate) * 100;
+    const sign  = pctChange > 0 ? '▲' : pctChange < 0 ? '▼' : '—';
+    const col   = pctChange > 0 ? '#F87171' : pctChange < 0 ? '#34D399' : 'var(--ink4)';
+    deltaHtml   = `<span style="font-size:10px;font-weight:600;color:${col};margin-left:6px;">${sign} ${Math.abs(pctChange).toFixed(1)}%</span>`;
+  }
+
+  const displayRate = currRate !== null ? `${currRate.toFixed(1)}%` : '—';
+  const wkLabel     = currWk !== null ? `Wk ${currWk} ILI rate` : 'No recent data';
+
   facStrip.innerHTML += `
     <div class="fac-card" style="border-top-color:${f.color}">
       <div class="fac-name">${f.name}</div>
       <div class="fac-stat">
-        <div class="fac-stat-val" style="color:${f.color}">${medRate.toFixed(1)}%</div>
-        <div class="fac-stat-lbl">median ILI rate</div>
+        <div style="display:flex;align-items:baseline;gap:0;">
+          <div class="fac-stat-val" style="color:${f.color}">${displayRate}</div>
+          ${deltaHtml}
+        </div>
+        <div class="fac-stat-lbl">${wkLabel}</div>
       </div>
       <div class="fac-row">
         <div class="fac-mini">
           <div class="fac-mini-val">${f.total_c.toLocaleString()}</div>
-          <div class="fac-mini-lbl">cases</div>
+          <div class="fac-mini-lbl">cases (total)</div>
         </div>
         <div class="fac-mini">
           <div class="fac-mini-val">${f.total_o.toLocaleString()}</div>
-          <div class="fac-mini-lbl">OPD</div>
+          <div class="fac-mini-lbl">OPD (total)</div>
         </div>
         <div class="fac-mini">
           <div class="fac-mini-val">Wk ${peakWk}</div>
@@ -1826,10 +1850,6 @@ function epiWeekDates(week, year) {
 
 function computeAllSummaries() {
 
-  // ── Header date (today) ──────────────────
-  document.getElementById('hdr-date').textContent =
-    new Date().toISOString().slice(0, 10);
-
   // ── Threshold sidebar values ─────────────
   document.getElementById('thr-epi-val').textContent  = THR.epi.toFixed(1);
   document.getElementById('thr-epi-val2').textContent = THR.epi.toFixed(1);
@@ -1842,6 +1862,11 @@ function computeAllSummaries() {
   const smoReported = SMO.map((v,i) => v !== null ? {v, wk:i+1} : null).filter(Boolean);
   const latestObs   = obsReported[obsReported.length - 1];
   const latestSmo   = smoReported[smoReported.length - 1];
+
+  // ── Header date currency badge ────────────
+  const endDate = epiWeekDates(latestObs.wk, 2026).split('–')[1]?.trim() || '';
+  const badgeEl = document.getElementById('hdr-date-badge');
+  if (badgeEl) badgeEl.textContent = `Data as of Wk ${latestObs.wk} · ${endDate}`;
   document.getElementById('sb-weekLabel').innerHTML =
     `Week ${latestObs.wk} <span class="sh-week-range">${epiWeekDates(latestObs.wk, 2026)}</span>`;
   document.getElementById('sb-obsVal').textContent    = latestObs.v.toFixed(1);
