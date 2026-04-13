@@ -310,6 +310,7 @@ body {
 .metric.c-high::before    { background:#EF4444; }
 .metric.c-teal::before    { background:#0EA5E9; }
 .metric.c-neutral::before { background:var(--ink4); }
+.metric.c-custom::before  { background:var(--metric-accent,var(--ink4)); }
 .m-label { font-size:11px; color:var(--ink3); margin-bottom:5px; }
 .m-value { font-family:'DM Mono',monospace; font-size:26px; font-weight:500; line-height:1; letter-spacing:-0.02em; }
 .m-sub   { font-size:11px; color:var(--ink3); margin-top:5px; }
@@ -374,7 +375,7 @@ body {
 }
 .results-table th {
   font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--ink4);
+  text-transform: uppercase; color: var(--ink2);
   padding: 8px 14px; background: var(--surface2);
 }
 .results-table th:nth-child(1) { text-align: left; }
@@ -410,6 +411,7 @@ body {
 .tag-infB  { background: rgba(192,132,252,0.15); color: #C084FC; }
 .tag-cov2  { background: rgba(244,63,94,0.15);   color: #F87171; }
 .tag-none  { background: var(--surface2); color: var(--ink4); border: 1px solid var(--border); }
+.tag-inc   { background: rgba(249,115,22,0.15); color: #F97316; border: 1px solid rgba(249,115,22,0.35); }
 
 .table-scroll-hint {
   display: none;
@@ -456,9 +458,9 @@ body {
 .heatmap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
 .heatmap-grid {
   display:grid;
-  grid-template-columns: 110px repeat(13, 46px);
+  grid-template-columns: 110px repeat(var(--hm-weeks, 13), 46px);
   gap:3px;
-  min-width: 720px;
+  min-width: calc(110px + var(--hm-weeks, 13) * 49px);
   width: max-content;
 }
 .hm-header {
@@ -894,7 +896,7 @@ body {
         <div class="card-top">
           <div>
             <div class="card-title">2026 Weekly Values</div>
-            <div class="card-desc">Weeks 1–13 vs epidemic threshold</div>
+            <div class="card-desc">Weeks 1–14 vs epidemic threshold</div>
           </div>
         </div>
         <div class="chart-wrap" style="height:210px;"><canvas id="barChart"></canvas></div>
@@ -923,7 +925,7 @@ body {
       <div class="card-top">
         <div>
           <div class="card-title">ILI Activity by Health Facility</div>
-          <div class="card-desc">Weeks 1–13 · Klinik Kesihatan, Tawau District</div>
+          <div class="card-desc">Weeks 1–14 · Klinik Kesihatan, Tawau District</div>
         </div>
         <div class="toggles">
           <button class="tog on"  id="fbt-rate"  onclick="switchFacView('rate',this)">ILI Rate %</button>
@@ -974,20 +976,25 @@ body {
         <div class="m-value" id="sm-infA" style="color:#38BDF8">—</div>
         <div class="m-sub"  id="sm-infA-sub">—</div>
       </div>
-      <div class="metric" style="border-top-color:#C084FC">
+      <div class="metric c-custom" style="--metric-accent:#C084FC">
         <div class="m-label">Influenza B</div>
         <div class="m-value" id="sm-infB" style="color:#C084FC">—</div>
         <div class="m-sub"  id="sm-infB-sub">—</div>
       </div>
-      <div class="metric" style="border-top-color:#F43F5E">
+      <div class="metric c-custom" style="--metric-accent:#F43F5E">
         <div class="m-label">SARS-CoV-2</div>
         <div class="m-value" id="sm-cov2" style="color:#F43F5E">—</div>
         <div class="m-sub"  id="sm-cov2-sub">—</div>
       </div>
-      <div class="metric" style="border-top-color:var(--ink4)">
+      <div class="metric c-custom" style="--metric-accent:var(--ink4)">
         <div class="m-label">Untyped positive</div>
         <div class="m-value" id="sm-untyped" style="color:var(--ink3)">—</div>
         <div class="m-sub"  id="sm-untyped-sub">—</div>
+      </div>
+      <div class="metric c-custom" style="--metric-accent:#F97316">
+        <div class="m-label">Inconclusive</div>
+        <div class="m-value" id="sm-inc" style="color:#F97316">—</div>
+        <div class="m-sub"  id="sm-inc-sub">—</div>
       </div>
     </div>
 
@@ -999,13 +1006,14 @@ body {
         <div class="card-top">
           <div>
             <div class="card-title">Sample Results by Week</div>
-            <div class="card-desc">Positive / negative counts with positivity rate %</div>
+            <div class="card-desc">Positive / negative / inconclusive counts with positivity rate %</div>
           </div>
         </div>
         <div class="chart-wrap" style="height:230px;"><canvas id="sampleChart"></canvas></div>
         <div class="legend" style="margin-top:10px;padding-top:10px;">
           <span class="leg"><span class="leg-ln" style="background:#4A5568;height:8px;border-radius:2px;opacity:0.6;"></span>Negative</span>
           <span class="leg"><span class="leg-ln" style="background:#F43F5E;height:8px;border-radius:2px;"></span>Positive</span>
+          <span class="leg"><span class="leg-ln" style="background:#F97316;height:8px;border-radius:2px;opacity:0.85;"></span>Inconclusive</span>
           <span class="leg"><span class="leg-dsh" style="color:#FBBF24;"></span>Positivity rate %</span>
         </div>
       </div>
@@ -1024,6 +1032,7 @@ body {
           <span class="leg"><span class="leg-dot" style="background:#C084FC;"></span>Influenza B</span>
           <span class="leg"><span class="leg-dot" style="background:#F43F5E;"></span>SARS-CoV-2</span>
           <span class="leg"><span class="leg-dot" style="background:#94A3B8;"></span>Untyped</span>
+          <span class="leg"><span class="leg-dot" style="background:#F97316;"></span>Inconclusive</span>
         </div>
       </div>
 
@@ -1034,7 +1043,7 @@ body {
       <div class="card-top">
         <div>
           <div class="card-title">Weekly Sampling Log</div>
-          <div class="card-desc">Full results with pathogen remarks · 2026 weeks 1–12</div>
+          <div class="card-desc">Full results with pathogen remarks · 2026 weeks 1–14</div>
         </div>
       </div>
       <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px;">
@@ -1097,8 +1106,8 @@ function toggleTheme() {
 
 function getThemeColors() {
   return isDark
-    ? { grid:'rgba(255,255,255,0.06)', tick:'#4A5568', avgLine:'rgba(230,237,243,0.85)', ciAlpha:'rgba(77,148,255,0.12)', pointBg:'#161B22' }
-    : { grid:'rgba(0,0,0,0.05)',       tick:'#B0BAC8', avgLine:'rgba(15,23,36,0.82)',    ciAlpha:'rgba(0,87,255,0.09)',   pointBg:'#FFFFFF'  };
+    ? { grid:'rgba(255,255,255,0.06)', tick:'#CBD5E1', avgLine:'rgba(230,237,243,0.85)', ciAlpha:'rgba(77,148,255,0.12)', pointBg:'#161B22' }
+    : { grid:'rgba(0,0,0,0.08)',       tick:'#4A5568', avgLine:'rgba(15,23,36,0.82)',    ciAlpha:'rgba(0,87,255,0.09)',   pointBg:'#FFFFFF'  };
 }
 
 /* ══════════════════════════════════════════
@@ -1107,8 +1116,8 @@ function getThemeColors() {
 const WEEKS = Array.from({length:52},(_,i)=>i+1);
 const AVG   = [12.08,10.34,9.49,9.94,10.81,12.48,13.19,13.29,13.70,13.57,14.05,13.18,13.10,12.35,12.63,12.23,12.49,12.45,12.88,14.70,15.49,17.32,18.06,19.39,18.04,17.54,16.27,15.34,14.23,13.27,13.12,13.32,13.52,13.48,14.57,15.07,15.68,15.23,15.39,15.06,14.88,14.08,14.25,14.64,14.60,14.32,14.00,13.89,15.00,15.35,15.29,14.81];
 const CI_UP = [14.44,14.88,13.88,14.03,14.03,15.81,16.85,18.25,19.30,17.34,17.89,16.63,16.63,15.81,16.36,15.92,15.58,16.04,15.41,17.18,18.13,20.57,21.60,22.52,21.28,20.55,20.05,18.23,17.18,15.52,14.58,15.19,15.41,15.28,16.67,16.51,17.02,15.68,15.99,15.59,15.83,15.31,15.14,15.38,16.04,16.01,16.57,15.84,17.33,15.97,16.30,15.23];
-const OBS   = [11.37,12.74,14.61,14.97,14.77,13.63,12.69,14.00,16.02,14.75,13.91,15.66,15.60,...Array(39).fill(null)];
-const SMO   = [13.32,12.91,14.11,14.78,14.46,13.70,13.44,14.24,14.92,14.89,14.77,15.06,15.63,...Array(39).fill(null)];
+const OBS   = [11.37,12.74,14.61,14.97,14.77,13.63,12.69,14.00,16.02,14.75,13.91,15.66,15.60,13.0,...Array(38).fill(null)];
+const SMO   = [13.32,12.91,14.11,14.78,14.46,13.70,13.44,14.24,14.92,14.89,14.77,15.06,15.63,14.75,...Array(38).fill(null)];
 const THR   = {epi:14.135,mod:18.770,high:22.519,xtra:24.176};
 const f52   = v => Array(52).fill(v);
 const PEAKS = [
@@ -1227,16 +1236,16 @@ window.addEventListener('resize', adjustMainChartScale);
 /* ══════════════════════════════════════════
    BAR CHART
 ══════════════════════════════════════════ */
-const obs13  = OBS.slice(0,13);
+const obs13  = OBS.slice(0,14);
 const barClr = obs13.map(v=>v===null?'transparent':v>=THR.mod?'#EF4444':v>=THR.epi?'#F59E0B':'#0EA5E9');
 
 const barChart = new Chart(document.getElementById('barChart').getContext('2d'),{
   type:'bar',
   data:{
-    labels:Array.from({length:13},(_,i)=>`W${i+1}`),
+    labels:Array.from({length:14},(_,i)=>`W${i+1}`),
     datasets:[
       {label:'Observed', data:obs13, backgroundColor:barClr, borderRadius:4, borderSkipped:false},
-      {label:'Epidemic', data:Array(13).fill(THR.epi), type:'line', borderColor:'#F59E0B', borderWidth:1.5, borderDash:[4,3], pointRadius:0, fill:false}
+      {label:'Epidemic', data:Array(14).fill(THR.epi), type:'line', borderColor:'#F59E0B', borderWidth:1.5, borderDash:[4,3], pointRadius:0, fill:false}
     ]
   },
   options:{
@@ -1310,7 +1319,7 @@ function updateChartsTheme() {
   }
   // Update sampleChart point border color
   if (sampleChart) {
-    sampleChart.data.datasets[2].pointBorderColor = t.pointBg;
+    sampleChart.data.datasets[3].pointBorderColor = t.pointBg;
   }
 
   // Update axes + grid on all charts
@@ -1338,49 +1347,49 @@ function updateChartsTheme() {
 /* ══════════════════════════════════════════
    FACILITY DATA
 ══════════════════════════════════════════ */
-const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 const FACILITIES = [
   { name:'KK Apas Balung',      short:'Apas Balung',   color:'#38BDF8',
-    cases:[105,122,134,116,155,145,71,107,122,107,70,72,86],
-    opd:  [665,763,828,778,677,839,374,799,709,702,432,514,490],
-    rate: [15.8,16.0,16.2,14.9,22.9,17.3,19.0,13.4,17.2,15.2,16.2,14.0,17.6],
-    total_c:1412, total_o:8570,
+    cases:[105,122,134,116,155,145,71,107,122,107,70,72,86,111],
+    opd:  [665,763,828,778,677,839,374,799,709,702,432,514,490,810],
+    rate: [15.8,16.0,16.2,14.9,22.9,17.3,19.0,13.4,17.2,15.2,16.2,14.0,17.6,13.7],
+    total_c:1523, total_o:9380,
     thr: { epi:14.8, mod:14.2, high:22.6, xtra:27.0 }, baseline:'2024–2025' },
   { name:'KK Felda Umas-Umas',  short:'Felda U-U',     color:'#FBBF24',
-    cases:[61,116,116,67,96,77,33,94,87,59,51,34,40],
-    opd:  [461,459,443,445,435,447,245,469,449,399,284,277,297],
-    rate: [13.2,25.3,26.2,15.1,22.1,17.2,13.5,20.0,19.4,14.8,18.0,12.3,13.5],
-    total_c:931, total_o:5110,
+    cases:[61,116,116,67,96,77,33,94,87,59,51,34,40,97],
+    opd:  [461,459,443,445,435,447,245,469,449,399,284,277,297,501],
+    rate: [13.2,25.3,26.2,15.1,22.1,17.2,13.5,20.0,19.4,14.8,18.0,12.3,13.5,19.4],
+    total_c:1028, total_o:5611,
     thr: { epi:27.2, mod:25.5, high:37.6, xtra:47.9 }, baseline:'2024–2025' },
   { name:'KK Kalabakan',        short:'Kalabakan',     color:'#4ADE80',
-    cases:[59,49,45,57,46,34,28,58,70,48,39,37,25],
-    opd:  [186,215,206,226,192,161,101,212,232,181,178,186,136],
-    rate: [31.7,22.8,21.8,25.2,24.0,21.1,27.7,27.4,30.2,26.5,21.9,19.9,18.4],
-    total_c:595, total_o:2412,
+    cases:[59,49,45,57,46,34,28,58,70,48,39,37,25,64],
+    opd:  [186,215,206,226,192,161,101,212,232,181,178,186,136,250],
+    rate: [31.7,22.8,21.8,25.2,24.0,21.1,27.7,27.4,30.2,26.5,21.9,19.9,18.4,25.6],
+    total_c:659, total_o:2662,
     thr: { epi:16.9, mod:15.8, high:25.3, xtra:31.8 }, baseline:'2024–2025' },
   { name:'KK Merotai Besar',    short:'Merotai Besar', color:'#F87171',
-    cases:[37,47,55,91,93,98,27,67,98,73,44,64,64],
-    opd:  [205,495,508,535,541,506,354,608,520,523,316,387,349],
-    rate: [18.0,9.5,10.8,17.0,17.2,19.4,7.6,11.0,18.8,14.0,13.9,16.5,18.3],
-    total_c:858, total_o:5847,
+    cases:[37,47,55,91,93,98,27,67,98,73,44,64,64,82],
+    opd:  [205,495,508,535,541,506,354,608,520,523,316,387,349,620],
+    rate: [18.0,9.5,10.8,17.0,17.2,19.4,7.6,11.0,18.8,14.0,13.9,16.5,18.3,13.2],
+    total_c:940, total_o:6467,
     thr: { epi:14.3, mod:11.8, high:28.0, xtra:32.8 }, baseline:'2024–2025' },
   { name:'KK Sungai Tamang',    short:'Sg. Tamang',    color:'#C084FC',
-    cases:[32,38,40,38,33,29,13,14,16,23,17,16,0],
-    opd:  [171,170,186,193,204,208,92,116,122,125,102,83,0],
-    rate: [18.7,22.4,21.5,19.7,16.2,13.9,14.1,12.1,13.1,18.4,16.7,19.3,null],
+    cases:[32,38,40,38,33,29,13,14,16,23,17,16,0,0],
+    opd:  [171,170,186,193,204,208,92,116,122,125,102,83,0,0],
+    rate: [18.7,22.4,21.5,19.7,16.2,13.9,14.1,12.1,13.1,18.4,16.7,19.3,null,null],
     total_c:309, total_o:1772,
     thr: { epi:29.3, mod:28.0, high:39.4, xtra:44.2 }, baseline:'2024–2025' },
   { name:'KK Tawau',            short:'KK Tawau',      color:'#FB923C',
-    cases:[455,489,579,656,534,582,298,669,672,588,325,426,441],
-    opd:  [4737,4432,4235,4482,4218,4699,2441,4824,4442,4041,2465,2580,2816],
-    rate: [9.6,11.0,13.7,14.6,12.7,12.4,12.2,13.9,15.1,14.6,13.2,16.5,15.7],
-    total_c:6714, total_o:50412,
+    cases:[455,489,579,656,534,582,298,669,672,588,325,426,441,611],
+    opd:  [4737,4432,4235,4482,4218,4699,2441,4824,4442,4041,2465,2580,2816,5018],
+    rate: [9.6,11.0,13.7,14.6,12.7,12.4,12.2,13.9,15.1,14.6,13.2,16.5,15.7,12.2],
+    total_c:7325, total_o:55430,
     thr: { epi:12.4, mod:12.0, high:16.8, xtra:20.2 }, baseline:'2024–2025' },
   { name:'KK Kinabutan',        short:'Kinabutan',     color:'#22D3EE',
-    cases:[18,26,32,45,38,39,14,43,50,69,19,25,36],
-    opd:  [319,427,444,491,469,507,207,485,485,584,285,276,349],
-    rate: [5.6,6.1,7.2,9.2,8.1,7.7,6.8,8.9,10.3,11.8,6.7,9.1,10.3],
-    total_c:454, total_o:5328,
+    cases:[18,26,32,45,38,39,14,43,50,69,19,25,36,38],
+    opd:  [319,427,444,491,469,507,207,485,485,584,285,276,349,512],
+    rate: [5.6,6.1,7.2,9.2,8.1,7.7,6.8,8.9,10.3,11.8,6.7,9.1,10.3,7.4],
+    total_c:492, total_o:5840,
     thr: { epi:9.2, mod:8.9, high:13.2, xtra:14.5 }, baseline:'2024–2025' }
 ];
 
@@ -1447,6 +1456,9 @@ function heatColor(rate, fac) {
 function buildHeatmap() {
   const hm = document.getElementById('facHeatmap');
   const weeks = FAC_WEEKS;
+
+  // Set grid column count dynamically
+  document.documentElement.style.setProperty('--hm-weeks', weeks.length);
 
   let html = `<div class="heatmap"><div class="heatmap-grid">`;
 
@@ -1624,29 +1636,33 @@ window.addEventListener('resize', applyChartFontScale);
    CLINICAL SAMPLING DATA
 ══════════════════════════════════════════ */
 const SAMPLE_DATA = [
-  {wk:1,  samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
-  {wk:2,  samples:15, neg:14, pos:1,  yield:6.7,    remarks:'Influenza A'},
-  {wk:3,  samples:15, neg:14, pos:1,  yield:6.7,    remarks:'Influenza A'},
-  {wk:4,  samples:15, neg:13, pos:2,  yield:13.3,   remarks:'Influenza A, SARS-CoV-2'},
-  {wk:5,  samples:15, neg:14, pos:1,  yield:6.7,    remarks:'Influenza B'},
-  {wk:6,  samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
-  {wk:7,  samples:13, neg:11, pos:2,  yield:15.4,   remarks:'SARS-CoV-2 (2)'},
-  {wk:8,  samples:15, neg:13, pos:2,  yield:13.3,   remarks:'Influenza A, SARS-CoV-2'},
-  {wk:9,  samples:15, neg:12, pos:3,  yield:20.0,   remarks:'Influenza A, Influenza B (2)'},
-  {wk:10, samples:10, neg:10, pos:0,  yield:0,      remarks:'—'},
-  {wk:11, samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
-  {wk:12, samples:15, neg:15, pos:0,  yield:0,      remarks:'—'},
+  {wk:1,  samples:15, neg:15, pos:0,  inc:0, yield:0,      remarks:'—'},
+  {wk:2,  samples:15, neg:14, pos:1,  inc:0, yield:6.7,    remarks:'Influenza A'},
+  {wk:3,  samples:15, neg:14, pos:1,  inc:0, yield:6.7,    remarks:'Influenza A'},
+  {wk:4,  samples:15, neg:13, pos:2,  inc:0, yield:13.3,   remarks:'Influenza A, SARS-CoV-2'},
+  {wk:5,  samples:15, neg:14, pos:1,  inc:0, yield:6.7,    remarks:'Influenza B'},
+  {wk:6,  samples:15, neg:15, pos:0,  inc:0, yield:0,      remarks:'—'},
+  {wk:7,  samples:13, neg:11, pos:2,  inc:0, yield:15.4,   remarks:'SARS-CoV-2 (2)'},
+  {wk:8,  samples:15, neg:13, pos:2,  inc:0, yield:13.3,   remarks:'Influenza A, SARS-CoV-2'},
+  {wk:9,  samples:15, neg:12, pos:3,  inc:0, yield:20.0,   remarks:'Influenza A, Influenza B (2)'},
+  {wk:10, samples:10, neg:10, pos:0,  inc:0, yield:0,      remarks:'—'},
+  {wk:11, samples:15, neg:15, pos:0,  inc:0, yield:0,      remarks:'—'},
+  {wk:12, samples:15, neg:15, pos:0,  inc:0, yield:0,      remarks:'—'},
+  {wk:13, samples:13, neg:13, pos:0,  inc:0, yield:0,      remarks:'—'},
+  {wk:14, samples:15, neg:12, pos:2,  inc:1, yield:13.3,   remarks:'Influenza B, SARS-CoV-2'},
 ];
 
-// Per-week pathogen counts [InfA, InfB, CoV2, Untyped]
+// Per-week pathogen counts [InfA, InfB, CoV2, Untyped, Inconclusive]
 const PATH_BY_WEEK = [
-  [0,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,1,0],[0,1,0,0],
-  [0,0,0,0],[0,0,2,0],[1,0,1,0],[1,2,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]
+  [0,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,1,0,0],[0,1,0,0,0],
+  [0,0,0,0,0],[0,0,2,0,0],[1,0,1,0,0],[1,2,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],
+  [0,0,0,0,0],[0,1,1,0,1]
 ];
 
 const S_WEEKS  = SAMPLE_DATA.map(d=>`W${d.wk}`);
 const S_NEG    = SAMPLE_DATA.map(d=>d.neg);
 const S_POS    = SAMPLE_DATA.map(d=>d.pos);
+const S_INC    = SAMPLE_DATA.map(d=>d.inc);
 const S_RATE   = SAMPLE_DATA.map(d=>d.yield);
 
 /* ── Sample results chart ── */
@@ -1655,8 +1671,9 @@ sampleChart = new Chart(document.getElementById('sampleChart').getContext('2d'),
   data: {
     labels: S_WEEKS,
     datasets: [
-      { label:'Negative', data:S_NEG, backgroundColor:'rgba(74,85,104,0.55)', borderRadius:3, borderSkipped:false, stack:'s' },
-      { label:'Positive', data:S_POS, backgroundColor:'rgba(244,63,94,0.85)', borderRadius:3, borderSkipped:false, stack:'s' },
+      { label:'Negative',     data:S_NEG, backgroundColor:'rgba(74,85,104,0.55)',  borderRadius:0, borderSkipped:false, stack:'s' },
+      { label:'Positive',     data:S_POS, backgroundColor:'rgba(244,63,94,0.85)',  borderRadius:0, borderSkipped:false, stack:'s' },
+      { label:'Inconclusive', data:S_INC, backgroundColor:'rgba(249,115,22,0.75)', borderRadius:0, borderSkipped:false, stack:'s' },
       { label:'Positivity %', data:S_RATE, type:'line', borderColor:'#FBBF24', borderWidth:2,
         borderDash:[4,3], pointRadius:4, pointBackgroundColor:'#FBBF24',
         pointBorderColor: isDark ? '#161B22' : '#FFFFFF',
@@ -1691,10 +1708,11 @@ pathogenChart = new Chart(document.getElementById('pathogenChart').getContext('2
   data:{
     labels: S_WEEKS,
     datasets:[
-      { label:'Influenza A', data:PATH_BY_WEEK.map(w=>w[0]), backgroundColor:'rgba(56,189,248,0.8)',  borderRadius:3, borderSkipped:false, stack:'p' },
-      { label:'Influenza B', data:PATH_BY_WEEK.map(w=>w[1]), backgroundColor:'rgba(192,132,252,0.8)', borderRadius:3, borderSkipped:false, stack:'p' },
-      { label:'SARS-CoV-2',  data:PATH_BY_WEEK.map(w=>w[2]), backgroundColor:'rgba(244,63,94,0.8)',   borderRadius:3, borderSkipped:false, stack:'p' },
-      { label:'Untyped',     data:PATH_BY_WEEK.map(w=>w[3]), backgroundColor:'rgba(148,163,184,0.6)', borderRadius:3, borderSkipped:false, stack:'p' }
+      { label:'Influenza A', data:PATH_BY_WEEK.map(w=>w[0]), backgroundColor:'rgba(56,189,248,0.8)',  borderRadius:0, borderSkipped:false, stack:'p' },
+      { label:'Influenza B', data:PATH_BY_WEEK.map(w=>w[1]), backgroundColor:'rgba(192,132,252,0.8)', borderRadius:0, borderSkipped:false, stack:'p' },
+      { label:'SARS-CoV-2',  data:PATH_BY_WEEK.map(w=>w[2]), backgroundColor:'rgba(244,63,94,0.8)',   borderRadius:0, borderSkipped:false, stack:'p' },
+      { label:'Untyped',     data:PATH_BY_WEEK.map(w=>w[3]), backgroundColor:'rgba(148,163,184,0.6)', borderRadius:0, borderSkipped:false, stack:'p' },
+      { label:'Inconclusive',data:PATH_BY_WEEK.map(w=>w[4]), backgroundColor:'rgba(249,115,22,0.75)', borderRadius:0, borderSkipped:false, stack:'p' }
     ]
   },
   options:{
@@ -1728,6 +1746,7 @@ SAMPLE_DATA.forEach(d => {
     if (d.remarks.includes('Influenza B'))  tags += `<span class="pathogen-tag tag-infB">Influenza B</span>`;
     if (d.remarks.includes('SARS-CoV'))     tags += `<span class="pathogen-tag tag-cov2">SARS-CoV-2</span>`;
     if (d.remarks.includes('Untyped'))      tags += `<span class="pathogen-tag tag-none">Untyped</span>`;
+    if (d.remarks.includes('Inconclusive')) tags += `<span class="pathogen-tag tag-inc">Inconclusive</span>`;
   }
 
   tbody.innerHTML += `
@@ -1882,6 +1901,7 @@ function computeAllSummaries() {
   const infBCount    = PATH_BY_WEEK.reduce((s,w) => s + w[1], 0);
   const cov2Count    = PATH_BY_WEEK.reduce((s,w) => s + w[2], 0);
   const untypedCount = PATH_BY_WEEK.reduce((s,w) => s + w[3], 0);
+  const incCount     = PATH_BY_WEEK.reduce((s,w) => s + w[4], 0);
 
   const weeksWithPathogen = (idx) =>
     PATH_BY_WEEK.map((w,i) => w[idx] > 0 ? `Wk ${i+1}` : null).filter(Boolean);
@@ -1903,7 +1923,10 @@ function computeAllSummaries() {
   document.getElementById('sm-cov2-sub').textContent  = fmt(weeksWithPathogen(2));
   document.getElementById('sm-untyped').textContent      = untypedCount;
   document.getElementById('sm-untyped-sub').textContent  = untypedCount > 0
-    ? fmt(weeksWithPathogen(3)) : 'None pending';
+    ? fmt(weeksWithPathogen(3)) : 'None detected';
+  document.getElementById('sm-inc').textContent     = incCount;
+  document.getElementById('sm-inc-sub').textContent = incCount > 0
+    ? fmt(weeksWithPathogen(4)) : 'None detected';
 
 }
 computeAllSummaries();
