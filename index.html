@@ -951,6 +951,7 @@ body {
           <button class="tog on"  id="fbt-rate"  onclick="switchFacView('rate',this)">ILI Rate %</button>
           <button class="tog"     id="fbt-cases" onclick="switchFacView('cases',this)">Cases</button>
           <button class="tog"     id="fbt-opd"   onclick="switchFacView('opd',this)">OPD Volume</button>
+          <button class="tog"     id="fbt-age"   onclick="switchFacView('age',this)">Age Groups</button>
         </div>
       </div>
 
@@ -966,6 +967,20 @@ body {
         </div>
         <p class="table-scroll-hint" id="facBarHint">← Scroll to see all weeks →</p>
         <div class="legend" id="facLegend" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"></div>
+      </div>
+
+      <!-- Age group chart -->
+      <div id="facAgeWrap" style="display:none;">
+        <div class="toggles" style="margin-bottom:12px;">
+          <button class="tog on" id="age-cur" onclick="switchAgeView('current',this)">Current week</button>
+          <button class="tog"    id="age-cum" onclick="switchAgeView('cumulative',this)">Cumulative</button>
+        </div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+          <div style="position:relative;min-width:600px;width:100%;height:280px;">
+            <canvas id="ageChart"></canvas>
+          </div>
+        </div>
+        <div class="legend" id="ageLegend" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"></div>
       </div>
     </div>
 
@@ -1347,6 +1362,7 @@ function updateChartsTheme() {
   if (facChart)      allCharts.push(facChart);
   if (sampleChart)   allCharts.push(sampleChart);
   if (pathogenChart) allCharts.push(pathogenChart);
+  if (ageChart)      allCharts.push(ageChart);
 
   allCharts.forEach(ch => {
     Object.values(ch.options.scales).forEach(axis => {
@@ -1368,6 +1384,34 @@ function updateChartsTheme() {
    FACILITY DATA
 ══════════════════════════════════════════ */
 const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+
+/* ── Age group breakdown data ──
+   [<10, 10-18, 19-59, ≥60]  current week (Wk 14) and cumulative (Wks 1-14)
+   Source: Kejadian Semasa & Kumulatif Kes & OPD mengikut pecahan umur */
+const AGE_GROUPS  = ['< 10', '10–18', '19–59', '≥ 60'];
+const AGE_COLORS  = ['#38BDF8','#4ADE80','#FBBF24','#F87171'];
+
+// Current week (Wk 14) cases by age group per facility
+const AGE_CUR_CASES = [
+  [51,  29,  26,  5],   // KK Apas Balung
+  [35,  34,  24,  4],   // KK Felda U-U
+  [13,  19,  25,  7],   // KK Kalabakan
+  [35,  19,  24,  4],   // KK Merotai Besar
+  [3,   8,   10,  2],   // KK Sungai Tamang
+  [241, 152, 155, 63],  // KK Tawau
+  [20,  17,  5,   0],   // KK Kinabutan
+];
+
+// Cumulative (Wks 1–14) cases by age group per facility
+const AGE_CUM_CASES = [
+  [647,  358,  440,  78],   // KK Apas Balung
+  [369,  342,  273,  44],   // KK Felda U-U
+  [153,  209,  210,  87],   // KK Kalabakan
+  [315,  273,  278,  74],   // KK Merotai Besar
+  [49,   104,  151,  41],   // KK Sungai Tamang
+  [2632, 1772, 2117, 804],  // KK Tawau
+  [232,  172,  92,   0],    // KK Kinabutan
+];
 const FACILITIES = [
   { name:'KK Apas Balung',      short:'Apas Balung',   color:'#38BDF8',
     cases:[105,122,134,116,155,145,71,107,122,107,70,72,86,111],
@@ -1642,12 +1686,17 @@ function switchFacView(view, btn) {
 
   const heatmap = document.getElementById('facHeatmap');
   const barWrap = document.getElementById('facBarWrap');
+  const ageWrap = document.getElementById('facAgeWrap');
+
+  heatmap.style.display = 'none';
+  barWrap.style.display = 'none';
+  ageWrap.style.display = 'none';
 
   if (view === 'rate') {
     heatmap.style.display = '';
-    barWrap.style.display = 'none';
+  } else if (view === 'age') {
+    ageWrap.style.display = '';
   } else {
-    heatmap.style.display = 'none';
     barWrap.style.display = '';
     facChart.data.datasets = getFacDatasets(view);
     const yLabels = { cases: 'Case count', opd: 'OPD visits' };
@@ -1655,6 +1704,66 @@ function switchFacView(view, btn) {
     facChart.update();
   }
 }
+
+/* ── Age group chart ── */
+let ageView = 'current';
+let ageChart = null;
+
+function buildAgeChart(view) {
+  const data = view === 'current' ? AGE_CUR_CASES : AGE_CUM_CASES;
+  const labels = FACILITIES.map(f => f.short);
+  const t = getThemeColors();
+
+  const datasets = AGE_GROUPS.map((grp, gi) => ({
+    label: grp,
+    data: data.map(row => row[gi]),
+    backgroundColor: AGE_COLORS[gi] + 'CC',
+    borderColor: AGE_COLORS[gi],
+    borderWidth: 1,
+    borderRadius: 0,
+    borderSkipped: false,
+    stack: 'age'
+  }));
+
+  if (ageChart) { ageChart.destroy(); ageChart = null; }
+
+  ageChart = new Chart(document.getElementById('ageChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...tipBase, callbacks: {
+          title: i => i[0].label,
+          label: i => ` ${i.dataset.label}: ${i.raw.toLocaleString()}`
+        }}
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: t.tick, font: { size: 11, family: "'DM Sans'" } }, grid: { color: t.grid } },
+        y: { stacked: true, ticks: { color: t.tick, font: { size: 11, family: "'DM Sans'" } }, grid: { color: t.grid },
+             title: { display: true, text: view === 'current' ? 'Cases (current week)' : 'Cases (cumulative)', color: t.tick, font: { size: 12, family: "'DM Sans'" } } }
+      }
+    }
+  });
+
+  // Build legend
+  const ageLeg = document.getElementById('ageLegend');
+  ageLeg.innerHTML = AGE_GROUPS.map((g, i) =>
+    `<span class="leg"><span class="leg-ln" style="background:${AGE_COLORS[i]};height:10px;border-radius:2px;width:12px;"></span>${g}</span>`
+  ).join('');
+}
+
+function switchAgeView(view, btn) {
+  ageView = view;
+  document.querySelectorAll('[id^="age-"]').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  buildAgeChart(view);
+}
+
+// Build on first load
+buildAgeChart('current');
 
 // All charts ready — apply initial dark theme colours
 updateChartsTheme();
