@@ -214,14 +214,25 @@ body {
 .sh-body {
   padding:12px 14px 12px;
   display:flex;
-  align-items:center;
+  align-items:stretch;
   justify-content:space-between;
-  gap:10px;
+  gap:0;
 }
-.sh-left  { display:flex; flex-direction:column; gap:4px; min-width:0; }
-.sh-label { font-size:10px; color:var(--status-lbl); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; }
-.sh-val   { font-family:'DM Mono',monospace; font-size:36px; font-weight:500; color:var(--accent); line-height:1; flex-shrink:0; }
-.sh-smo   { font-size:12px; color:var(--ink3); display:flex; align-items:baseline; gap:5px; }
+.sh-left  {
+  display:flex; flex-direction:column; justify-content:center;
+  gap:5px; min-width:0; flex:1; padding-right:14px;
+}
+.sh-right {
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  flex-shrink:0; padding-left:14px;
+  border-left:1px solid var(--status-bd);
+  min-width:80px;
+}
+.sh-label    { font-size:10px; color:var(--ink); text-transform:uppercase; letter-spacing:0.07em; font-weight:700; white-space:nowrap; }
+.sh-week-range { font-size:9.5px; font-weight:500; color:var(--ink3); text-transform:none; letter-spacing:0; margin-left:4px; }
+.sh-obs-label { font-size:9.5px; color:var(--status-lbl); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; white-space:nowrap; margin-bottom:2px; }
+.sh-val      { font-family:'DM Mono',monospace; font-size:36px; font-weight:500; color:var(--accent); line-height:1; flex-shrink:0; }
+.sh-smo      { font-size:12px; color:var(--ink3); display:flex; align-items:baseline; gap:5px; white-space:nowrap; }
 .sh-smo strong { font-family:'DM Mono',monospace; font-size:16px; font-weight:500; color:var(--ink2); }
 .sh-tag   {
   display:block; width:100%;
@@ -611,13 +622,15 @@ body {
   .leg-dot { width:8px; height:8px; }
 
   /* Status hero — compact on mobile */
-  .status-hero { margin:4px 14px 0; }
-  .sh-body  { padding:10px 12px; }
-  .sh-val   { font-size:28px; }
-  .sh-label { font-size:9.5px; }
-  .sh-smo   { font-size:11px; }
+  .status-hero  { margin:4px 14px 0; }
+  .sh-body      { padding:10px 12px; }
+  .sh-val       { font-size:28px; }
+  .sh-label     { font-size:9.5px; }
+  .sh-obs-label { font-size:9px; }
+  .sh-right     { min-width:70px; }
+  .sh-smo       { font-size:11px; }
   .sh-smo strong { font-size:13px; }
-  .sh-tag   { font-size:11px; padding:7px 12px; }
+  .sh-tag       { font-size:11px; padding:7px 12px; }
 
   /* Seasons table — full width on mobile */
   .s-table { width:100%; }
@@ -665,13 +678,13 @@ body {
 
   /* Sidebar */
   .sb-heading   { font-size:11px; }
-  .sh-val       { font-size:28px; padding-left:14px; }
+  .sh-val       { font-size:28px; }
   .sh-label     { font-size:11px; }
+  .sh-obs-label { font-size:10px; }
+  .sh-right     { min-width:90px; }
   .sh-smo       { font-size:13px; }
   .sh-smo strong { font-size:18px; }
   .sh-tag       { font-size:12.5px; padding:9px 16px; }
-  .sh-body      { gap:0; }
-  .sh-left      { flex:1; padding-right:14px; border-right:1px solid var(--status-bd); }
   .thr-left     { font-size:14px; }
   .thr-num      { font-size:15px; }
   .thr-swatch   { width:11px; height:11px; }
@@ -768,13 +781,16 @@ body {
     <div class="status-hero fade-up d1">
       <div class="sh-body">
         <div class="sh-left">
-          <span class="sh-label" id="sb-weekLabel">Week — · Observed</span>
+          <span class="sh-label" id="sb-weekLabel">Week —</span>
           <div class="sh-smo">
             <span>3-wk smoothed</span>
             <strong id="sb-smoVal">—</strong>
           </div>
         </div>
-        <span class="sh-val" id="sb-obsVal">—</span>
+        <div class="sh-right">
+          <span class="sh-obs-label">Observed</span>
+          <span class="sh-val" id="sb-obsVal">—</span>
+        </div>
       </div>
       <span class="sh-tag" id="sb-statusTag">—</span>
     </div>
@@ -1790,6 +1806,24 @@ function updateStatusTagTheme() {
   }
 }
 
+/* ── Epi week date range helper ── */
+function epiWeekDates(week, year) {
+  const jan4 = new Date(year, 0, 4);
+  const week1Start = new Date(jan4);
+  week1Start.setDate(jan4.getDate() - jan4.getDay()); // back to Sunday
+  const start = new Date(week1Start);
+  start.setDate(week1Start.getDate() + (week - 1) * 7);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  const fmtShort = d => d.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
+  // If same month: "05 – 11 Apr 2026", cross-month: "30 Mar – 05 Apr 2026"
+  const sameMonth = start.getMonth() === end.getMonth();
+  return sameMonth
+    ? `${start.getDate().toString().padStart(2,'0')} – ${fmt(end)}`
+    : `${fmtShort(start)} – ${fmt(end)}`;
+}
+
 function computeAllSummaries() {
 
   // ── Header date (today) ──────────────────
@@ -1808,7 +1842,8 @@ function computeAllSummaries() {
   const smoReported = SMO.map((v,i) => v !== null ? {v, wk:i+1} : null).filter(Boolean);
   const latestObs   = obsReported[obsReported.length - 1];
   const latestSmo   = smoReported[smoReported.length - 1];
-  document.getElementById('sb-weekLabel').textContent = `Week ${latestObs.wk} · Observed`;
+  document.getElementById('sb-weekLabel').innerHTML =
+    `Week ${latestObs.wk} <span class="sh-week-range">${epiWeekDates(latestObs.wk, 2026)}</span>`;
   document.getElementById('sb-obsVal').textContent    = latestObs.v.toFixed(1);
   document.getElementById('sb-smoVal').textContent    = latestSmo.v.toFixed(1);
   const statusTag = document.getElementById('sb-statusTag');
