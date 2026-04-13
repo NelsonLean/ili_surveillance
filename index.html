@@ -305,7 +305,7 @@ body {
 /* ══════════════════════════════════════════
    METRIC STRIP
 ══════════════════════════════════════════ */
-.metric-strip { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
+.metric-strip { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; }
 .metric {
   background:var(--surface); border:1px solid var(--border);
   border-radius:10px; padding:14px 16px; position:relative; overflow:hidden;
@@ -562,8 +562,7 @@ body {
 @media (max-width:1100px) {
   .shell { grid-template-columns:290px minmax(0,1fr); }
   .sb-group { padding:16px 14px 4px; }
-  .metric-strip { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .m-value { font-size:22px; }
+  .metric-strip { grid-template-columns:repeat(3,minmax(0,1fr)); }  .m-value { font-size:22px; }
   .fac-strip { grid-template-columns:repeat(4,minmax(0,1fr)); }
 }
 
@@ -874,6 +873,11 @@ body {
         <div class="m-label">Peak week range</div>
         <div class="m-value" id="m-peakRange" style="color:#EF4444">—</div>
         <div class="m-sub"  id="m-peakRangeSub">—</div>
+      </div>
+      <div class="metric c-custom" id="m-curCrCard" style="--metric-accent:#4D94FF">
+        <div class="m-label">Current week CR</div>
+        <div class="m-value" id="m-curCr" style="color:#4D94FF">—</div>
+        <div class="m-sub"  id="m-curCrSub">—</div>
       </div>
     </div>
 
@@ -1948,6 +1952,24 @@ function computeAllSummaries() {
   const maxPkWk   = Math.max(...peakWeeks);
   document.getElementById('m-peakRange').textContent    = `${minPkWk}–${maxPkWk}`;
   document.getElementById('m-peakRangeSub').textContent = 'High seasonal variability';
+
+  // ── Current week CR card ─────────────────
+  const curCrEl    = document.getElementById('m-curCr');
+  const curCrSub   = document.getElementById('m-curCrSub');
+  const curCrCard  = document.getElementById('m-curCrCard');
+  if (curCrEl && latestObs) {
+    curCrEl.textContent = `${latestObs.v.toFixed(1)}%`;
+    // Status label and colour based on threshold
+    let statusLabel, crColor, accentColor;
+    if (latestObs.v >= THR.xtra)      { statusLabel = 'Extraordinary'; crColor = '#8B5CF6'; accentColor = '#8B5CF6'; }
+    else if (latestObs.v >= THR.high) { statusLabel = 'High intensity'; crColor = '#EF4444'; accentColor = '#EF4444'; }
+    else if (latestObs.v >= THR.mod)  { statusLabel = 'Moderate';       crColor = '#F97316'; accentColor = '#F97316'; }
+    else if (latestObs.v >= THR.epi)  { statusLabel = 'Above epidemic'; crColor = '#F59E0B'; accentColor = '#F59E0B'; }
+    else                              { statusLabel = 'Below seasonal threshold'; crColor = '#34D399'; accentColor = '#34D399'; }
+    curCrEl.style.color = crColor;
+    curCrCard.style.setProperty('--metric-accent', accentColor);
+    curCrSub.textContent = `Wk ${latestObs.wk} · ${statusLabel}`;
+  }
 
   // ── Clinical sampling summary ────────────
   const reported   = SAMPLE_DATA.filter(d => d.samples > 0);
