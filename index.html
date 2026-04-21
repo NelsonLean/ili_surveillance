@@ -398,6 +398,23 @@ body {
 
 .results-table tbody tr { border-bottom: 1px solid var(--border); }
 .results-table tbody tr:last-child { border-bottom: none; }
+/* Accordion expand button */
+.row-expand-btn {
+  background:none; border:none; cursor:pointer;
+  color:var(--ink4); font-size:11px; padding:2px 5px;
+  border-radius:4px; transition:color 0.15s, background 0.15s; line-height:1;
+}
+.row-expand-btn:hover { color:var(--accent); background:var(--accent-bg); }
+.row-expand-btn.open  { color:var(--accent); }
+.sample-detail-row td { padding:0 !important; border-bottom:1px solid var(--border) !important; }
+.sample-detail-inner  { display:none; padding:10px 16px 12px; background:var(--surface2); font-size:12px; }
+.sample-detail-inner.open { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; }
+.sd-group  { display:flex; flex-direction:column; gap:5px; min-width:100px; }
+.sd-label  { font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink4); margin-bottom:1px; }
+.sd-item   { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink2); }
+.sd-dot    { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.sd-bar-bg { flex:1; height:5px; background:var(--border); border-radius:3px; min-width:60px; }
+.sd-bar    { height:5px; border-radius:3px; transition:width 0.3s; }
 .results-table tbody tr:nth-child(odd) td { background: var(--surface); }
 .results-table tbody tr:nth-child(even) td { background: var(--surface2); }
 .results-table tbody tr:hover td { background: rgba(77,148,255,0.07) !important; }
@@ -406,7 +423,7 @@ body {
   padding: 10px 14px; vertical-align: middle;
   font-size: 13px; overflow: hidden; text-overflow: ellipsis;
 }
-.results-table td:nth-child(1) { font-weight: 600; text-align: left; color: var(--ink); }
+.results-table td:nth-child(1) { font-weight: 600; text-align: left; color: var(--ink); white-space: nowrap; }
 .results-table td:nth-child(2),
 .results-table td:nth-child(3),
 .results-table td:nth-child(4),
@@ -1829,6 +1846,25 @@ const PATH_BY_WEEK = [
   [0,0,0,0,0],[0,1,1,0,1],[0,1,0,0,0]
 ];
 
+// Sample characteristics per week: u18=under 18, o18=18+, m=male, f=female
+const SAMPLE_CHARS = {
+  1:  {u18:1,  o18:14, m:7,  f:8},
+  2:  {u18:2,  o18:13, m:7,  f:8},
+  3:  {u18:5,  o18:10, m:6,  f:9},
+  4:  {u18:4,  o18:11, m:9,  f:6},
+  5:  {u18:2,  o18:13, m:6,  f:9},
+  6:  {u18:9,  o18:6,  m:9,  f:6},
+  7:  {u18:2,  o18:11, m:7,  f:6},
+  8:  {u18:3,  o18:12, m:10, f:5},
+  9:  {u18:4,  o18:11, m:9,  f:6},
+  10: {u18:1,  o18:9,  m:7,  f:3},
+  11: {u18:5,  o18:10, m:5,  f:10},
+  12: {u18:2,  o18:13, m:8,  f:7},
+  13: {u18:2,  o18:11, m:8,  f:5},
+  14: {u18:5,  o18:10, m:9,  f:6},
+  15: {u18:5,  o18:10, m:3,  f:12},
+};
+
 const S_WEEKS  = SAMPLE_DATA.map(d=>`W${d.wk}`);
 const S_NEG    = SAMPLE_DATA.map(d=>d.neg);
 const S_POS    = SAMPLE_DATA.map(d=>d.pos);
@@ -1901,11 +1937,12 @@ pathogenChart = new Chart(document.getElementById('pathogenChart').getContext('2
   }
 });
 
-/* ── Build results table ── */
+/* ── Build results table with accordion ── */
 const tbody = document.getElementById('sampleTableBody');
 SAMPLE_DATA.forEach(d => {
   const rateColor = d.yield >= 15 ? '#F43F5E' : d.yield > 0 ? '#FBBF24' : 'var(--ink4)';
   const rateTxt   = d.yield > 0 ? `${d.yield.toFixed(1)}%` : '0%';
+  const rowId     = `sr-${d.wk}`;
 
   // Build pathogen tags
   let tags = '';
@@ -1919,20 +1956,81 @@ SAMPLE_DATA.forEach(d => {
     if (d.remarks.includes('Inconclusive')) tags += `<span class="pathogen-tag tag-inc">Inconclusive</span>`;
   }
 
+  // Build age/gender detail if available
+  const ch = SAMPLE_CHARS[d.wk];
+  let detailHtml = '';
+  if (ch) {
+    const total = ch.u18 + ch.o18;
+    const u18Pct = total ? Math.round(ch.u18/total*100) : 0;
+    const o18Pct = 100 - u18Pct;
+    const mPct   = total ? Math.round(ch.m/total*100) : 0;
+    const fPct   = 100 - mPct;
+    detailHtml = `
+      <td colspan="6">
+        <div class="sample-detail-inner" id="${rowId}-detail">
+          <div class="sd-group">
+            <span class="sd-label">Age group</span>
+            <div class="sd-item">
+              <span class="sd-dot" style="background:#38BDF8"></span>
+              <span style="min-width:50px;">&lt; 18</span>
+              <div class="sd-bar-bg"><div class="sd-bar" style="width:${u18Pct}%;background:#38BDF8"></div></div>
+              <span style="min-width:30px;">${ch.u18} (${u18Pct}%)</span>
+            </div>
+            <div class="sd-item">
+              <span class="sd-dot" style="background:#FB923C"></span>
+              <span style="min-width:50px;">≥ 18</span>
+              <div class="sd-bar-bg"><div class="sd-bar" style="width:${o18Pct}%;background:#FB923C"></div></div>
+              <span style="min-width:30px;">${ch.o18} (${o18Pct}%)</span>
+            </div>
+          </div>
+          <div class="sd-group">
+            <span class="sd-label">Gender</span>
+            <div class="sd-item">
+              <span class="sd-dot" style="background:#818CF8"></span>
+              <span style="min-width:50px;">Male</span>
+              <div class="sd-bar-bg"><div class="sd-bar" style="width:${mPct}%;background:#818CF8"></div></div>
+              <span style="min-width:30px;">${ch.m} (${mPct}%)</span>
+            </div>
+            <div class="sd-item">
+              <span class="sd-dot" style="background:#F472B6"></span>
+              <span style="min-width:50px;">Female</span>
+              <div class="sd-bar-bg"><div class="sd-bar" style="width:${fPct}%;background:#F472B6"></div></div>
+              <span style="min-width:30px;">${ch.f} (${fPct}%)</span>
+            </div>
+          </div>
+        </div>
+      </td>`;
+  }
+
   tbody.innerHTML += `
-    <tr>
-      <td>Week ${d.wk}</td>
-      <td>${d.samples}</td>
-      <td style="color:var(--ink3)">${d.neg}</td>
+    <tr onclick="toggleSampleDetail(${d.wk})" style="cursor:${ch?'pointer':'default'}">
       <td>
-        <span class="pos-badge" style="color:${d.pos>0?'#F43F5E':'var(--ink4)'}">
-          ${d.pos > 0 ? '▲' : ''} ${d.pos}
+        <span style="display:inline-flex;align-items:center;gap:5px;">
+          Week ${d.wk}
+          ${ch ? `<button class="row-expand-btn" id="${rowId}-btn" onclick="event.stopPropagation();toggleSampleDetail(${d.wk})">▶</button>` : ''}
         </span>
       </td>
+      <td>${d.samples}</td>
+      <td style="color:var(--ink3)">${d.neg}</td>
+      <td><span class="pos-badge" style="color:${d.pos>0?'#F43F5E':'var(--ink4)'}">
+        ${d.pos > 0 ? '▲' : ''} ${d.pos}</span></td>
       <td style="color:${rateColor};font-weight:600">${rateTxt}</td>
       <td>${tags}</td>
-    </tr>`;
+    </tr>
+    ${ch ? `<tr class="sample-detail-row">${detailHtml}</tr>` : ''}`;
 });
+
+function toggleSampleDetail(wk) {
+  const detail = document.getElementById(`sr-${wk}-detail`);
+  const btn    = document.getElementById(`sr-${wk}-btn`);
+  if (!detail) return;
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  if (btn) {
+    btn.textContent = isOpen ? '▶' : '▼';
+    btn.classList.toggle('open', !isOpen);
+  }
+}
 
 /* ══════════════════════════════════════════
    COMPUTE ALL SUMMARY VALUES FROM DATA
