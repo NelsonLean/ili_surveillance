@@ -1161,69 +1161,69 @@ body {
       </div>
     </div>
 
-    <!-- Weekly notification chart -->
-    <div class="card fade-up d5">
-      <div class="card-top">
-        <div>
-          <div class="card-title">Weekly Notifications by Subtype</div>
-          <div class="card-desc">Notified influenza cases from private &amp; government facilities · Weeks 1–21</div>
-        </div>
-      </div>
-      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <div style="position:relative;min-width:580px;width:100%;height:230px;">
-          <canvas id="notifChart"></canvas>
-        </div>
-      </div>
-      <p class="table-scroll-hint">← Scroll to see all weeks →</p>
-      <div class="legend" style="margin-top:10px;">
-        <span class="leg"><span class="leg-ln" style="background:#FBBF24;"></span>Influenza A</span>
-        <span class="leg"><span class="leg-ln" style="background:#C084FC;"></span>Influenza B</span>
-        <span class="leg"><span class="leg-ln" style="background:#94A3B8;"></span>Unspecified / Other</span>
-      </div>
-    </div>
 
-    <!-- Age & Gender breakdown side by side -->
+    <!-- Weekly notifications + Age group side by side -->
     <div class="grid2 fade-up d5">
+      <!-- Weekly notification chart -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">Weekly Notifications by Subtype</div>
+            <div class="card-desc">Notified influenza cases from private &amp; government facilities · Weeks 1–21</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+          <div style="position:relative;min-width:360px;width:100%;height:230px;">
+            <canvas id="notifChart"></canvas>
+          </div>
+        </div>
+        <p class="table-scroll-hint">← Scroll to see all weeks →</p>
+        <div class="legend" style="margin-top:10px;">
+          <span class="leg"><span class="leg-ln" style="background:#FBBF24;"></span>Influenza A</span>
+          <span class="leg"><span class="leg-ln" style="background:#C084FC;"></span>Influenza B</span>
+          <span class="leg"><span class="leg-ln" style="background:#94A3B8;"></span>Unspecified / Other</span>
+        </div>
+      </div>
       <!-- Age group breakdown -->
       <div class="card">
         <div class="card-top">
           <div>
             <div class="card-title">Age Group Distribution</div>
-            <div class="card-desc">Cumulative notifications · Wks 1–21</div>
+            <div class="card-desc">Notifications by age group</div>
           </div>
+          <select id="notifAgeWkSelect" onchange="setNotifAgeWk(this.value==='all'?'all':+this.value,this)" style="
+            font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;
+            padding:5px 24px 5px 10px;border-radius:20px;cursor:pointer;
+            border:1px solid var(--tog-off-bd);background:var(--tog-off-bg);
+            color:var(--tog-off-c);outline:none;appearance:none;-webkit-appearance:none;
+            background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22><path d=%22M0 0l5 6 5-6z%22 fill=%22%238899AA%22/></svg>');
+            background-repeat:no-repeat;background-position:right 8px center;">
+            <option value="all">All weeks</option>
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8</option>
+            <option value="9">Week 9</option>
+            <option value="10">Week 10</option>
+            <option value="11">Week 11</option>
+            <option value="12">Week 12</option>
+            <option value="13">Week 13</option>
+            <option value="14">Week 14</option>
+            <option value="15">Week 15</option>
+            <option value="16">Week 16</option>
+            <option value="17">Week 17</option>
+            <option value="18">Week 18</option>
+            <option value="19">Week 19</option>
+            <option value="20">Week 20</option>
+            <option value="21">Week 21</option>
+          </select>
         </div>
-        <div style="position:relative;height:220px;">
+        <div style="position:relative;height:230px;">
           <canvas id="notifAgeChart"></canvas>
-        </div>
-      </div>
-      <!-- Gender breakdown -->
-      <div class="card">
-        <div class="card-top">
-          <div>
-            <div class="card-title">Gender Distribution</div>
-            <div class="card-desc">Cumulative notifications · Wks 1–21</div>
-          </div>
-        </div>
-        <div style="position:relative;height:220px;">
-          <canvas id="notifGenderChart"></canvas>
-        </div>
-        <!-- Summary stats -->
-        <div style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
-          <div style="flex:1;text-align:center;">
-            <div style="font-size:11px;color:var(--ink4);margin-bottom:2px;">Median age</div>
-            <div style="font-size:20px;font-weight:700;color:var(--ink);">12.5</div>
-            <div style="font-size:11px;color:var(--ink4);">years</div>
-          </div>
-          <div style="flex:1;text-align:center;">
-            <div style="font-size:11px;color:var(--ink4);margin-bottom:2px;">Under 18</div>
-            <div style="font-size:20px;font-weight:700;color:#38BDF8;">43</div>
-            <div style="font-size:11px;color:var(--ink4);">69.4% of cases</div>
-          </div>
-          <div style="flex:1;text-align:center;">
-            <div style="font-size:11px;color:var(--ink4);margin-bottom:2px;">Age range</div>
-            <div style="font-size:20px;font-weight:700;color:var(--ink);">1–62</div>
-            <div style="font-size:11px;color:var(--ink4);">years</div>
-          </div>
         </div>
       </div>
     </div>
@@ -1333,7 +1333,7 @@ const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'
       {id:'hig', label:'High',          data:f52(THR.high), borderColor:'#EF4444', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
       {id:'xtr', label:'Extraordinary', data:f52(THR.xtra), borderColor:'#8B5CF6', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
       {id:'notif', label:'Notifications (n)', type:'bar',
-        data:[4,4,6,4,3,2,0,3,1,0,1,1,2,2,5,1,2,2,9,6,4,...Array(31).fill(null)],
+        data:[4,4,6,4,3,2,0,3,1,0,1,1,2,2,5,1,2,2,9,6,4,...Array(31).fill(0)],
         backgroundColor:'rgba(251,191,36,0.25)', borderColor:'rgba(251,191,36,0.55)',
         borderWidth:1, borderRadius:2, borderSkipped:false,
         yAxisID:'yNotif', hidden:true, order:10}
@@ -1353,6 +1353,13 @@ const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'
           if(item.dataset.id==='notif') return ` Notifications: ${v}`;
           if(item.dataset.id==='pks') return ` ${PEAKS[item.dataIndex].s} peak: ${(+v).toFixed(1)}`;
           return ` ${item.dataset.label}: ${(+v).toFixed(1)}`;
+        },
+        filter:item=>{
+          if(item.dataset.id==='notif') {
+            const v = item.raw;
+            return v !== null && v !== undefined && v > 0;
+          }
+          return true;
         }
       }}
     },
@@ -2420,17 +2427,34 @@ const notifLabels  = NOTIF_WEEKS.map(w => 'W' + w);
     }
   });
 
-  /* -- 2. Age group horizontal bar -- */
-  // Age groups: <5, 5-9, 10-17, 18-29, 30-59, 60+
-  const ageCounts = [8, 15, 20, 7, 10, 2];
+})();
+
+const NOTIF_AGE_BY_WK = {
+  1:[1,0,2,0,1,0], 2:[1,1,1,0,1,0], 3:[0,0,3,2,1,0], 4:[2,0,0,1,0,1],
+  5:[0,3,0,0,0,0], 6:[1,1,0,0,0,0], 7:[0,0,0,0,0,0], 8:[0,1,0,0,2,0],
+  9:[0,0,1,0,0,0], 10:[0,0,0,0,0,0],11:[0,0,1,0,0,0],12:[0,0,0,0,1,0],
+  13:[0,0,0,1,1,0],14:[1,0,0,0,1,0],15:[2,0,1,2,0,0],16:[0,0,0,0,1,0],
+  17:[1,0,1,0,0,0],18:[0,0,1,0,1,0],19:[1,2,5,0,1,0],20:[2,1,2,0,1,0],
+  21:[3,1,0,0,0,0]
+};
+const NOTIF_AGE_CUMUL = [15,10,18,6,12,1];
+
+let notifAgeChart = null;
+let notifAgeWk = 'all';
+
+function buildNotifAgeChart(wk) {
+  const t = getThemeColors();
   const ageLabels = ['< 5','5 - 9','10 - 17','18 - 29','30 - 59','>= 60'];
-  new Chart(document.getElementById('notifAgeChart').getContext('2d'), {
+  const data = wk === 'all' ? NOTIF_AGE_CUMUL : (NOTIF_AGE_BY_WK[wk] || [0,0,0,0,0,0]);
+  const total = data.reduce((s,v)=>s+v,0);
+  if (notifAgeChart) { notifAgeChart.destroy(); notifAgeChart = null; }
+  notifAgeChart = new Chart(document.getElementById('notifAgeChart').getContext('2d'), {
     type: 'bar',
     data: {
       labels: ageLabels,
       datasets: [{
         label:'Cases',
-        data: ageCounts,
+        data: data,
         backgroundColor:[
           'rgba(56,189,248,0.8)','rgba(56,189,248,0.75)','rgba(56,189,248,0.7)',
           'rgba(251,191,36,0.75)','rgba(251,191,36,0.7)','rgba(251,191,36,0.65)'
@@ -2444,46 +2468,24 @@ const notifLabels  = NOTIF_WEEKS.map(w => 'W' + w);
       plugins:{
         legend:{display:false},
         tooltip:{...tipBase, callbacks:{
-          label: i => ' Cases: ' + i.raw + '  (' + Math.round(i.raw/62*100) + '%)'
+          label: i => total > 0 ? ' Cases: ' + i.raw + '  (' + Math.round(i.raw/total*100) + '%)' : ' Cases: 0'
         }}
       },
       scales:{
-        x:{ ticks:{color:t.tick, font:{size:10,family:"'DM Sans'"}}, grid:{color:t.grid},
+        x:{ ticks:{color:t.tick, font:{size:10,family:"'DM Sans'"}, stepSize:1, precision:0, callback: v => Number.isInteger(v) ? v : null}, grid:{color:t.grid},
             title:{display:true, text:'Notifications (n)', color:t.tick, font:{size:10,family:"'DM Sans'"}} },
         y:{ ticks:{color:t.tick, font:{size:11,family:"'DM Sans'"}}, grid:{color:t.grid} }
       }
     }
   });
+}
 
-  /* -- 3. Gender doughnut -- */
-  new Chart(document.getElementById('notifGenderChart').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Male','Female'],
-      datasets: [{
-        data:[38,24],
-        backgroundColor:['rgba(99,179,237,0.85)','rgba(249,168,212,0.85)'],
-        borderColor: isDark ? '#0D1117' : '#F5F7FA',
-        borderWidth:3,
-        hoverOffset:6
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      cutout:'62%',
-      plugins:{
-        legend:{
-          display:true, position:'bottom',
-          labels:{ color:t.tick, font:{size:12,family:"'DM Sans'"}, padding:16, usePointStyle:true }
-        },
-        tooltip:{...tipBase, callbacks:{
-          label: i => ' ' + i.label + ': ' + i.raw + ' (' + Math.round(i.raw/62*100) + '%)'
-        }}
-      }
-    }
-  });
+buildNotifAgeChart('all');
 
-})();
+function setNotifAgeWk(wk) {
+  notifAgeWk = wk;
+  buildNotifAgeChart(wk);
+}
 
 /* ══════════════════════════════════════════
    MOBILE TOOLTIP FIXES
