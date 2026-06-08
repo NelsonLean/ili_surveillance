@@ -908,6 +908,7 @@ body {
           <button class="tog on" onclick="tog('ci',this)">CI band</button>
           <button class="tog" onclick="tog('smooth',this)">Smoothed</button>
           <button class="tog on" onclick="tog('thr',this)">Thresholds</button>
+          <button class="tog" onclick="tog('notif',this)">Notifications</button>
           <select id="overlaySelect" onchange="setOverlay(this.value)" style="
             font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;
             padding:5px 10px;border-radius:20px;cursor:pointer;
@@ -931,6 +932,7 @@ body {
         <span class="leg" id="leg-obs-wrap"><span class="leg-ln" style="background:#4D94FF"></span>2026 obs.</span>
         <span class="leg" id="leg-smo-wrap" style="display:none;"><span class="leg-dsh" style="color:rgba(20,184,166,0.8)"></span>2026 smoothed</span>
         <span class="leg" id="leg-overlay" style="display:none;"><span class="leg-dsh" style="color:rgba(244,63,94,0.6)"></span>2025 ref.</span>
+        <span class="leg" id="leg-notif-wrap" style="display:none;"><span class="leg-box" style="background:rgba(251,191,36,0.35);border:1px solid rgba(251,191,36,0.55);width:12px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;"></span>Notifications (n)</span>
         <span class="leg" id="leg-thr-wrap" style="display:flex;align-items:center;gap:8px;">
           <span class="leg" style="margin:0;"><span class="leg-ln" style="background:#F59E0B"></span>Epidemic</span>
           <span class="leg" style="margin:0;"><span class="leg-ln" style="background:#F97316"></span>Moderate</span>
@@ -1130,6 +1132,102 @@ body {
       <p class="table-scroll-hint">← Scroll to see pathogens →</p>
     </div>
 
+    <!-- Influenza Notifications Section -->
+    <div class="section-divider fade-up d5">
+      <span class="section-label">Influenza Notifications · Private Practitioners · 2026</span>
+    </div>
+
+    <!-- Metric cards row -->
+    <div class="metric-strip fade-up d5" style="grid-template-columns:repeat(4,minmax(0,1fr));">
+      <div class="metric c-custom" style="--metric-accent:#38BDF8">
+        <div class="m-label">Total notifications</div>
+        <div class="m-value" style="color:#38BDF8">62</div>
+        <div class="m-sub">Weeks 1–21 · 2026</div>
+      </div>
+      <div class="metric c-custom" style="--metric-accent:#FBBF24">
+        <div class="m-label">Influenza A</div>
+        <div class="m-value" style="color:#FBBF24">22</div>
+        <div class="m-sub">35.5% · Wks 1–14 dominant</div>
+      </div>
+      <div class="metric c-custom" style="--metric-accent:#C084FC">
+        <div class="m-label">Influenza B</div>
+        <div class="m-value" style="color:#C084FC">25</div>
+        <div class="m-sub">40.3% · Wks 11–21 dominant</div>
+      </div>
+      <div class="metric c-custom" style="--metric-accent:#94A3B8">
+        <div class="m-label">Unspecified / Other</div>
+        <div class="m-value" style="color:#94A3B8">15</div>
+        <div class="m-sub">Including A&amp;B, Parainfluenza</div>
+      </div>
+    </div>
+
+    <!-- Weekly notification chart -->
+    <div class="card fade-up d5">
+      <div class="card-top">
+        <div>
+          <div class="card-title">Weekly Notifications by Subtype</div>
+          <div class="card-desc">Notified influenza cases from private &amp; government facilities · Weeks 1–21</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <div style="position:relative;min-width:580px;width:100%;height:230px;">
+          <canvas id="notifChart"></canvas>
+        </div>
+      </div>
+      <p class="table-scroll-hint">← Scroll to see all weeks →</p>
+      <div class="legend" style="margin-top:10px;">
+        <span class="leg"><span class="leg-ln" style="background:#FBBF24;"></span>Influenza A</span>
+        <span class="leg"><span class="leg-ln" style="background:#C084FC;"></span>Influenza B</span>
+        <span class="leg"><span class="leg-ln" style="background:#94A3B8;"></span>Unspecified / Other</span>
+      </div>
+    </div>
+
+    <!-- Age & Gender breakdown side by side -->
+    <div class="grid2 fade-up d5">
+      <!-- Age group breakdown -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">Age Group Distribution</div>
+            <div class="card-desc">Cumulative notifications · Wks 1–21</div>
+          </div>
+        </div>
+        <div style="position:relative;height:220px;">
+          <canvas id="notifAgeChart"></canvas>
+        </div>
+      </div>
+      <!-- Gender breakdown -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="card-title">Gender Distribution</div>
+            <div class="card-desc">Cumulative notifications · Wks 1–21</div>
+          </div>
+        </div>
+        <div style="position:relative;height:220px;">
+          <canvas id="notifGenderChart"></canvas>
+        </div>
+        <!-- Summary stats -->
+        <div style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="flex:1;text-align:center;">
+            <div style="font-size:11px;color:var(--ink4);margin-bottom:2px;">Median age</div>
+            <div style="font-size:20px;font-weight:700;color:var(--ink);">12.5</div>
+            <div style="font-size:11px;color:var(--ink4);">years</div>
+          </div>
+          <div style="flex:1;text-align:center;">
+            <div style="font-size:11px;color:var(--ink4);margin-bottom:2px;">Under 18</div>
+            <div style="font-size:20px;font-weight:700;color:#38BDF8;">43</div>
+            <div style="font-size:11px;color:var(--ink4);">69.4% of cases</div>
+          </div>
+          <div style="flex:1;text-align:center;">
+            <div style="font-size:11px;color:var(--ink4);margin-bottom:2px;">Age range</div>
+            <div style="font-size:20px;font-weight:700;color:var(--ink);">1–62</div>
+            <div style="font-size:11px;color:var(--ink4);">years</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="footnote fade-up d5">
       Epidemic threshold: median of historic ILI rates (2022–2025). Intensity thresholds derived from 40th / 90th / 97.5th percentile of smoothed historic peaks using normal distribution. 2009 H1N1 pandemic excluded. Parameter: WHO_ACM_Tawau_upload.
       <br>Source: WHO Global Influenza Programme — Average Curves Shiny App · Pejabat Kesihatan Kawasan Tawau, Sabah Malaysia.
@@ -1233,7 +1331,12 @@ const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'
       {id:'epi', label:'Epidemic',      data:f52(THR.epi),  borderColor:'#F59E0B', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
       {id:'mod', label:'Moderate',      data:f52(THR.mod),  borderColor:'#F97316', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
       {id:'hig', label:'High',          data:f52(THR.high), borderColor:'#EF4444', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
-      {id:'xtr', label:'Extraordinary', data:f52(THR.xtra), borderColor:'#8B5CF6', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false}
+      {id:'xtr', label:'Extraordinary', data:f52(THR.xtra), borderColor:'#8B5CF6', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
+      {id:'notif', label:'Notifications (n)', type:'bar',
+        data:[4,4,6,4,3,2,0,3,1,0,1,1,2,2,5,1,2,2,9,6,4,...Array(31).fill(null)],
+        backgroundColor:'rgba(251,191,36,0.25)', borderColor:'rgba(251,191,36,0.55)',
+        borderWidth:1, borderRadius:2, borderSkipped:false,
+        yAxisID:'yNotif', hidden:true, order:10}
     ]
   },
   options:{
@@ -1246,7 +1349,8 @@ const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'
         label:item=>{
           if(item.dataset.id==='ciu'||item.dataset.id==='cil') return null;
           const v = typeof item.raw==='object'?item.raw.y:item.raw;
-          if(v===null||v===undefined) return null;
+          if(v===null||v===undefined||v===0) return null;
+          if(item.dataset.id==='notif') return ` Notifications: ${v}`;
           if(item.dataset.id==='pks') return ` ${PEAKS[item.dataIndex].s} peak: ${(+v).toFixed(1)}`;
           return ` ${item.dataset.label}: ${(+v).toFixed(1)}`;
         }
@@ -1264,6 +1368,13 @@ const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'
         min:7,max:28,
         ticks:{color:tc.tick,font:{size:11,family:"'DM Sans'"},stepSize:2},
         grid:{color:tc.grid}
+      },
+      yNotif:{
+        position:'right', display:false,
+        min:0, max:15,
+        ticks:{color:'rgba(251,191,36,0.7)', font:{size:10,family:"'DM Sans'"}, stepSize:3},
+        grid:{display:false},
+        title:{display:true, text:'Notifications (n)', color:'rgba(251,191,36,0.7)', font:{size:10,family:"'DM Sans'"}}
       }
     }
   }
@@ -1358,8 +1469,8 @@ const barChart = new Chart(document.getElementById('barChart').getContext('2d'),
 /* ══════════════════════════════════════════
    TOGGLE DATASETS
 ══════════════════════════════════════════ */
-const layerMap = {ci:[0,1],smooth:[4],thr:[6,7,8,9]};
-const legMap = { ci:'leg-ci-wrap', smooth:'leg-smo-wrap', thr:'leg-thr-wrap' };
+const layerMap = {ci:[0,1],smooth:[4],thr:[6,7,8,9],notif:[10]};
+const legMap = { ci:'leg-ci-wrap', smooth:'leg-smo-wrap', thr:'leg-thr-wrap', notif:'leg-notif-wrap' };
 
 function tog(key,btn){
   btn.classList.toggle('on');
@@ -1367,6 +1478,9 @@ function tog(key,btn){
   layerMap[key].forEach(i=>{mainChart.data.datasets[i].hidden=hide;});
   const legEl = document.getElementById(legMap[key]);
   if (legEl) legEl.style.display = hide ? 'none' : '';
+  if (key === 'notif') {
+    mainChart.options.scales.yNotif.display = !hide;
+  }
   mainChart.update();
 }
 
@@ -2248,6 +2362,128 @@ function computeAllSummaries() {
 
 }
 computeAllSummaries();
+
+/* ==========================================
+   INFLUENZA NOTIFICATIONS - PRIVATE PRACTITIONERS
+========================================== */
+const NOTIF_WEEKS  = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+const NOTIF_INFA   = [3,3,6,3,0,2,0,1,0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1];
+const NOTIF_INFB   = [0,0,0,0,0,0,0,0,0, 0, 1, 1, 1, 1, 3, 1, 0, 0, 8, 6, 3];
+const NOTIF_OTHER  = [1,1,0,1,3,0,0,2,1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0, 0, 0];
+// Per-week: u18=under 18, o18=18+
+const NOTIF_META = [
+  {u18:3,o18:1},{u18:3,o18:1},{u18:3,o18:3},{u18:2,o18:2},{u18:3,o18:0},
+  {u18:2,o18:0},{u18:0,o18:0},{u18:1,o18:2},{u18:1,o18:0},{u18:0,o18:0},
+  {u18:1,o18:0},{u18:0,o18:1},{u18:0,o18:2},{u18:1,o18:1},{u18:3,o18:2},
+  {u18:0,o18:1},{u18:2,o18:0},{u18:1,o18:1},{u18:8,o18:1},{u18:5,o18:1},{u18:4,o18:0}
+];
+const notifLabels  = NOTIF_WEEKS.map(w => 'W' + w);
+
+(function buildNotifCharts() {
+  const t = getThemeColors();
+
+  /* -- 1. Weekly stacked bar chart -- */
+  new Chart(document.getElementById('notifChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: notifLabels,
+      datasets: [
+        { label:'Influenza A',        data:NOTIF_INFA,  backgroundColor:'rgba(251,191,36,0.82)',  borderRadius:0, borderSkipped:false, stack:'s' },
+        { label:'Influenza B',        data:NOTIF_INFB,  backgroundColor:'rgba(192,132,252,0.82)', borderRadius:0, borderSkipped:false, stack:'s' },
+        { label:'Unspecified / Other',data:NOTIF_OTHER, backgroundColor:'rgba(148,163,184,0.65)', borderRadius:0, borderSkipped:false, stack:'s' }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ ...tipBase, callbacks:{
+          title: i => 'Week ' + i[0].label.replace('W',''),
+          label: i => i.raw > 0 ? ' ' + i.dataset.label + ': ' + i.raw : null,
+          afterBody: i => {
+            const idx = parseInt(i[0].label.replace('W','')) - 1;
+            const m = NOTIF_META[idx];
+            if (!m) return [];
+            const n = m.u18 + m.o18;
+            if (n === 0) return [];
+            const p = v => Math.round(v/n*100) + '%';
+            return [' ', ' Age: <18=' + m.u18 + ' (' + p(m.u18) + ')  >=18=' + m.o18 + ' (' + p(m.o18) + ')'];
+          }
+        }}
+      },
+      scales:{
+        x:{ stacked:true, ticks:{color:t.tick, font:{size:11,family:"'DM Sans'"}}, grid:{color:t.grid} },
+        y:{ stacked:true, ticks:{color:t.tick, font:{size:11,family:"'DM Sans'"}, stepSize:2}, grid:{color:t.grid},
+            title:{display:true, text:'Notifications (n)', color:t.tick, font:{size:11,family:"'DM Sans'"}}}
+      }
+    }
+  });
+
+  /* -- 2. Age group horizontal bar -- */
+  // Age groups: <5, 5-9, 10-17, 18-29, 30-59, 60+
+  const ageCounts = [8, 15, 20, 7, 10, 2];
+  const ageLabels = ['< 5','5 - 9','10 - 17','18 - 29','30 - 59','>= 60'];
+  new Chart(document.getElementById('notifAgeChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ageLabels,
+      datasets: [{
+        label:'Cases',
+        data: ageCounts,
+        backgroundColor:[
+          'rgba(56,189,248,0.8)','rgba(56,189,248,0.75)','rgba(56,189,248,0.7)',
+          'rgba(251,191,36,0.75)','rgba(251,191,36,0.7)','rgba(251,191,36,0.65)'
+        ],
+        borderRadius:4, borderSkipped:false
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{...tipBase, callbacks:{
+          label: i => ' Cases: ' + i.raw + '  (' + Math.round(i.raw/62*100) + '%)'
+        }}
+      },
+      scales:{
+        x:{ ticks:{color:t.tick, font:{size:10,family:"'DM Sans'"}}, grid:{color:t.grid},
+            title:{display:true, text:'Notifications (n)', color:t.tick, font:{size:10,family:"'DM Sans'"}} },
+        y:{ ticks:{color:t.tick, font:{size:11,family:"'DM Sans'"}}, grid:{color:t.grid} }
+      }
+    }
+  });
+
+  /* -- 3. Gender doughnut -- */
+  new Chart(document.getElementById('notifGenderChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Male','Female'],
+      datasets: [{
+        data:[38,24],
+        backgroundColor:['rgba(99,179,237,0.85)','rgba(249,168,212,0.85)'],
+        borderColor: isDark ? '#0D1117' : '#F5F7FA',
+        borderWidth:3,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'62%',
+      plugins:{
+        legend:{
+          display:true, position:'bottom',
+          labels:{ color:t.tick, font:{size:12,family:"'DM Sans'"}, padding:16, usePointStyle:true }
+        },
+        tooltip:{...tipBase, callbacks:{
+          label: i => ' ' + i.label + ': ' + i.raw + ' (' + Math.round(i.raw/62*100) + '%)'
+        }}
+      }
+    }
+  });
+
+})();
 
 /* ══════════════════════════════════════════
    MOBILE TOOLTIP FIXES
