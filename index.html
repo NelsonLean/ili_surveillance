@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ILI Surveillance · Tawau · Wk 25</title>
+<title>ILI Surveillance · Tawau · Wk 26</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -774,7 +774,7 @@ body {
     </div>
   </div>
   <div class="h-right">
-    <span class="badge badge-green"><span class="live-dot"></span>Season 2026 · Wk 25</span>
+    <span class="badge badge-green"><span class="live-dot"></span>Season 2026 · Wk 26</span>
     <span class="badge" id="hdr-date-badge" style="background:var(--surface2);border:1px solid var(--border);color:var(--ink3);font-size:10px;white-space:nowrap;">Data as of Wk — · —</span>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark mode">
       <span id="themeIcon">☀️</span>
@@ -946,7 +946,7 @@ body {
         <div class="card-top">
           <div>
             <div class="card-title">2026 Weekly Values</div>
-            <div class="card-desc">Weeks 1–25 vs epidemic threshold</div>
+            <div class="card-desc">Weeks 1–26 vs epidemic threshold</div>
           </div>
         </div>
         <div class="chart-wrap" style="height:210px;"><canvas id="barChart"></canvas></div>
@@ -965,7 +965,7 @@ body {
       <div class="card-top">
         <div>
           <div class="card-title">ILI Activity by Health Facility</div>
-          <div class="card-desc">Weeks 1–25 · Klinik Kesihatan, Tawau District</div>
+          <div class="card-desc">Weeks 1–26 · Klinik Kesihatan, Tawau District</div>
         </div>
         <div class="toggles">
           <button class="tog on"  id="fbt-rate"  onclick="switchFacView('rate',this)">ILI Rate %</button>
@@ -1108,7 +1108,7 @@ body {
       <div class="card-top">
         <div>
           <div class="card-title">Weekly Sampling Log</div>
-          <div class="card-desc">Full results with pathogen remarks · 2026 weeks 1–25</div>
+          <div class="card-desc">Full results with pathogen remarks · 2026 weeks 1–26</div>
         </div>
       </div>
       <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px;">
@@ -1141,22 +1141,22 @@ body {
     <div class="metric-strip fade-up d5" style="grid-template-columns:repeat(4,minmax(0,1fr));">
       <div class="metric c-custom" style="--metric-accent:#38BDF8">
         <div class="m-label">Total notifications</div>
-        <div class="m-value" style="color:#38BDF8">115</div>
-        <div class="m-sub">Weeks 1–25 · 2026</div>
+        <div class="m-value" style="color:#38BDF8">133</div>
+        <div class="m-sub">Weeks 1–26 · 2026</div>
       </div>
       <div class="metric c-custom" style="--metric-accent:#FBBF24">
         <div class="m-label">Influenza A</div>
-        <div class="m-value" style="color:#FBBF24">26</div>
-        <div class="m-sub">22.6% · Wks 1–6 dominant</div>
+        <div class="m-value" style="color:#FBBF24">28</div>
+        <div class="m-sub">21.1% · Wks 1–6 dominant</div>
       </div>
       <div class="metric c-custom" style="--metric-accent:#C084FC">
         <div class="m-label">Influenza B</div>
-        <div class="m-value" style="color:#C084FC">74</div>
-        <div class="m-sub">64.3% · Wks 11–25 dominant</div>
+        <div class="m-value" style="color:#C084FC">85</div>
+        <div class="m-sub">63.9% · Wks 11–26 dominant</div>
       </div>
       <div class="metric c-custom" style="--metric-accent:#94A3B8">
         <div class="m-label">Unspecified / Other</div>
-        <div class="m-value" style="color:#94A3B8">15</div>
+        <div class="m-value" style="color:#94A3B8">20</div>
         <div class="m-sub">Including A&amp;B, Parainfluenza</div>
       </div>
     </div>
@@ -1169,7 +1169,7 @@ body {
         <div class="card-top">
           <div>
             <div class="card-title">Weekly Notifications by Subtype</div>
-            <div class="card-desc">Notified influenza cases from private &amp; government facilities · Weeks 1–25</div>
+            <div class="card-desc">Notified influenza cases from private &amp; government facilities · Weeks 1–26</div>
           </div>
         </div>
         <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
@@ -1224,6 +1224,7 @@ body {
             <option value="23">Week 23</option>
             <option value="24">Week 24</option>
             <option value="25">Week 25</option>
+            <option value="26">Week 26</option>
           </select>
         </div>
         <div style="position:relative;height:230px;">
@@ -1281,8 +1282,8 @@ function getThemeColors() {
 const WEEKS = Array.from({length:52},(_,i)=>i+1);
 const AVG   = [12.08,10.34,9.49,9.94,10.81,12.48,13.19,13.29,13.70,13.57,14.05,13.18,13.10,12.35,12.63,12.23,12.49,12.45,12.88,14.70,15.49,17.32,18.06,19.39,18.04,17.54,16.27,15.34,14.23,13.27,13.12,13.32,13.52,13.48,14.57,15.07,15.68,15.23,15.39,15.06,14.88,14.08,14.25,14.64,14.60,14.32,14.00,13.89,15.00,15.35,15.29,14.81];
 const CI_UP = [14.44,14.88,13.88,14.03,14.03,15.81,16.85,18.25,19.30,17.34,17.89,16.63,16.63,15.81,16.36,15.92,15.58,16.04,15.41,17.18,18.13,20.57,21.60,22.52,21.28,20.55,20.05,18.23,17.18,15.52,14.58,15.19,15.41,15.28,16.67,16.51,17.02,15.68,15.99,15.59,15.83,15.31,15.14,15.38,16.04,16.01,16.57,15.84,17.33,15.97,16.30,15.23];
-const OBS   = [11.37,12.74,14.61,14.97,14.77,13.63,12.69,14.00,16.02,14.75,13.91,15.66,15.60,13.0,13.57,13.11,11.38,10.83,12.61,11.36,10.77,11.34,12.11,11.87,13.39,...Array(27).fill(null)];
-const SMO   = [13.32,12.91,14.11,14.78,14.46,13.70,13.44,14.24,14.92,14.89,14.77,15.06,15.63,14.75,14.06,13.23,12.69,11.77,11.61,11.60,11.58,11.16,11.41,11.77,12.46,...Array(27).fill(null)];
+const OBS   = [11.37,12.74,14.61,14.97,14.77,13.63,12.69,14.00,16.02,14.75,13.91,15.66,15.60,13.0,13.57,13.11,11.38,10.83,12.61,11.36,10.77,11.34,12.11,11.87,13.39,15.70,...Array(26).fill(null)];
+const SMO   = [13.32,12.91,14.11,14.78,14.46,13.70,13.44,14.24,14.92,14.89,14.77,15.06,15.63,14.75,14.06,13.23,12.69,11.77,11.61,11.60,11.58,11.16,11.41,11.77,12.46,13.65,...Array(26).fill(null)];
 const OBS_2022 = [10.77,12.5,13.14,8.19,14.72,19.49,20.28,15.94,9.23,7.16,7.11,6.92,9.03,11.12,11.77,10.61,9.25,11.96,13.56,13.44,10.23,13.85,10.45,12.3,12.59,13.15,10.91,15.77,19.78,17.09,22.7,20.25,23.49,15.95,15.19,13.46,11.73,11.36,12.3,11.91,11.58,11.87,12.28,13.98,15.33,14.28,16.45,14.75,13.65,14.05,12.23,15.03];
 const OBS_2023 = [18.61,15.34,14.59,18.96,16.68,17.25,14.9,15.29,14.43,10.82,11.69,12.67,15.43,15.44,15.31,10.97,19.33,15.4,14.93,14.14,16.21,13.79,14.53,12.96,14.33,15.26,16.59,13.92,15.74,15.23,17.88,13.96,15.69,15.48,12.56,12.78,12.68,13.5,14.85,15.24,14.96,15.5,12.34,16.92,12.49,12.78,12.27,14.29,13.49,15.17,12.23,12.07];
 const OBS_2024 = [13.82,10.63,10.71,11.57,9.81,9.14,10.95,8.69,10.34,10.28,11.56,13.84,12.57,16.36,15.54,19.28,11.58,15.82,16.59,16.48,15.1,11.62,11.58,13.32,15.36,15.19,16.86,16.25,14.78,15.48,17.53,13.55,15.83,16.1,13.21,14.06,14.13,11.98,11.65,14.82,14.68,15.51,13.99,14.23,12.16,13.43,13.74,13.66,13.48,14.4,12.63,14.78];
@@ -1337,7 +1338,7 @@ const mainChart = new Chart(document.getElementById('mainChart').getContext('2d'
       {id:'hig', label:'High',          data:f52(THR.high), borderColor:'#EF4444', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
       {id:'xtr', label:'Extraordinary', data:f52(THR.xtra), borderColor:'#8B5CF6', borderWidth:1.3, borderDash:[5,3], pointRadius:0, fill:false},
       {id:'notif', label:'Notifications (n)', type:'bar',
-        data:[4,4,6,4,3,2,0,3,1,0,1,1,2,2,5,1,2,2,9,6,4,4,15,10,12,...Array(27).fill(0)],
+        data:[4,4,6,4,3,2,0,3,1,0,1,1,2,2,5,1,2,2,9,6,4,4,15,10,12,18,...Array(26).fill(0)],
         backgroundColor:'rgba(251,191,36,0.25)', borderColor:'rgba(251,191,36,0.55)',
         borderWidth:1, borderRadius:2, borderSkipped:false,
         yAxisID:'yNotif', hidden:true, order:10}
@@ -1541,7 +1542,7 @@ function updateChartsTheme() {
 /* ══════════════════════════════════════════
    FACILITY DATA
 ══════════════════════════════════════════ */
-const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
 
 /* ── Age group breakdown data ──
    [<10, 10-18, 19-59, ≥60]  current week (Wk 23) and cumulative (Wks 1-23)
@@ -1549,69 +1550,69 @@ const FAC_WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,2
 const AGE_GROUPS  = ['< 10', '10–18', '19–59', '≥ 60'];
 const AGE_COLORS  = ['#38BDF8','#4ADE80','#FBBF24','#F87171'];
 
-// Current week (Wk 25) cases by age group per facility
+// Current week (Wk 26) cases by age group per facility
 const AGE_CUR_CASES = [
-  [42,  56,  32,  5],   // KK Apas Balung
-  [0,   0,   0,   0],   // KK Felda U-U
-  [0,   2,   3,   0],   // KK Kalabakan
-  [39,  20,  28,  2],   // KK Merotai Besar
+  [50,  28,  25,  3],   // KK Apas Balung
+  [13,  32,  14,  3],   // KK Felda U-U
+  [0,   2,   2,   0],   // KK Kalabakan
+  [37,  31,  24,  3],   // KK Merotai Besar
   [4,   5,   10,  3],   // KK Sungai Tamang
-  [291, 194, 184, 64],  // KK Tawau
-  [22,  13,  7,   0],   // KK Kinabutan
+  [280, 219, 193, 82],  // KK Tawau
+  [25,  22,  11,  0],   // KK Kinabutan
 ];
 
-// Cumulative (Wks 1–25) cases by age group per facility
+// Cumulative (Wks 1–26) cases by age group per facility
 const AGE_CUM_CASES = [
-  [1079, 679,  733,  128],  // KK Apas Balung
-  [465,  461,  375,  70],   // KK Felda U-U
-  [164,  245,  256,  90],   // KK Kalabakan
-  [659,  466,  483,  105],  // KK Merotai Besar
-  [80,   161,  237,  66],   // KK Sungai Tamang
-  [5156, 3238, 3756, 1296], // KK Tawau
-  [417,  289,  150,  0],    // KK Kinabutan
+  [1129, 707,  758,  131],  // KK Apas Balung
+  [478,  493,  389,  73],   // KK Felda U-U
+  [164,  247,  258,  90],   // KK Kalabakan
+  [696,  497,  507,  108],  // KK Merotai Besar
+  [84,   166,  247,  69],   // KK Sungai Tamang
+  [5436, 3457, 3949, 1378], // KK Tawau
+  [442,  311,  161,  0],    // KK Kinabutan
 ];
 const FACILITIES = [
   { name:'KK Apas Balung',      short:'Apas Balung',   color:'#38BDF8',
-    cases:[105,122,134,116,155,145,71,107,122,107,70,72,86,111,134,95,80,87,92,126,66,67,118,96,135],
-    opd:  [665,763,828,778,677,839,374,799,709,702,432,514,490,810,799,761,609,770,779,747,531,499,836,671,803],
-    rate: [15.8,16.0,16.2,14.9,22.9,17.3,19.0,13.4,17.2,15.2,16.2,14.0,17.6,13.7,16.7,12.4,13.1,11.2,11.8,16.8,12.4,13.4,14.11,14.3,16.8],
-    total_c:2619, total_o:17185,
+    cases:[105,122,134,116,155,145,71,107,122,107,70,72,86,111,134,95,80,87,92,126,66,67,118,96,135,106],
+    opd:  [665,763,828,778,677,839,374,799,709,702,432,514,490,810,799,761,609,770,779,747,531,499,836,671,803,720],
+    rate: [15.8,16.0,16.2,14.9,22.9,17.3,19.0,13.4,17.2,15.2,16.2,14.0,17.6,13.7,16.7,12.4,13.1,11.2,11.8,16.8,12.4,13.4,14.11,14.3,16.8,14.7],
+    total_c:2725, total_o:17905,
     thr: { epi:14.8, mod:14.2, high:22.6, xtra:27.0 }, baseline:'2024–2025' },
   { name:'KK Felda Umas-Umas',  short:'Felda U-U',     color:'#FBBF24',
-    cases:[61,116,116,67,96,77,33,94,87,59,51,34,40,97,118,61,2,5,64,4,25,0,62,2,0],
-    opd:  [461,459,443,445,435,447,245,469,449,399,284,277,297,501,472,468,358,498,456,395,288,99,512,314,481],
-    rate: [13.2,25.3,26.2,15.1,22.1,17.2,13.5,20.0,19.4,14.8,18.0,12.3,13.5,19.4,25.0,13.0,0.55,1.0,14.0,1.01,8.68,0,12.11,0.63,0],
-    total_c:1371, total_o:9952,
+    cases:[61,116,116,67,96,77,33,94,87,59,51,34,40,97,118,61,2,5,64,4,25,0,62,2,0,62],
+    opd:  [461,459,443,445,435,447,245,469,449,399,284,277,297,501,472,468,358,498,456,395,288,99,512,314,481,488],
+    rate: [13.2,25.3,26.2,15.1,22.1,17.2,13.5,20.0,19.4,14.8,18.0,12.3,13.5,19.4,25.0,13.0,0.55,1.0,14.0,1.01,8.68,0,12.11,0.63,0,12.7],
+    total_c:1433, total_o:10440,
     thr: { epi:27.2, mod:25.5, high:37.6, xtra:47.9 }, baseline:'2024–2025' },
   { name:'KK Kalabakan',        short:'Kalabakan',     color:'#4ADE80',
-    cases:[59,49,45,57,46,34,28,58,70,48,39,37,25,64,16,15,8,8,7,7,9,6,9,6,5],
-    opd:  [186,215,206,226,192,161,101,212,232,181,178,186,136,250,238,258,166,209,229,230,188,159,244,195,259],
-    rate: [31.7,22.8,21.8,25.2,24.0,21.1,27.7,27.4,30.2,26.5,21.9,19.9,18.4,25.6,6.72,5.81,4.81,3.82,3.05,3.04,4.78,3.77,3.69,3.07,1.93],
-    total_c:755, total_o:5037,
+    cases:[59,49,45,57,46,34,28,58,70,48,39,37,25,64,16,15,8,8,7,7,9,6,9,6,5,4],
+    opd:  [186,215,206,226,192,161,101,212,232,181,178,186,136,250,238,258,166,209,229,230,188,159,244,195,259,257],
+    rate: [31.7,22.8,21.8,25.2,24.0,21.1,27.7,27.4,30.2,26.5,21.9,19.9,18.4,25.6,6.72,5.81,4.81,3.82,3.05,3.04,4.78,3.77,3.69,3.07,1.93,1.55],
+    total_c:759, total_o:5294,
     thr: { epi:16.9, mod:15.8, high:25.3, xtra:31.8 }, baseline:'2024–2025' },
   { name:'KK Merotai Besar',    short:'Merotai Besar', color:'#F87171',
-    cases:[37,47,55,91,93,98,27,67,98,73,44,64,64,82,93,112,61,74,101,86,22,36,52,47,89],
-    opd:  [205,495,508,535,541,506,354,608,520,523,316,387,349,620,671,633,440,566,601,591,299,282,577,378,569],
-    rate: [18.0,9.5,10.8,17.0,17.2,19.4,7.6,11.0,18.8,14.0,13.9,16.5,18.3,13.2,13.8,17.6,13.8,13.0,16.8,14.5,7.35,12.7,9.01,12.4,15.6],
-    total_c:1713, total_o:12074,
+    cases:[37,47,55,91,93,98,27,67,98,73,44,64,64,82,93,112,61,74,101,86,22,36,52,47,89,95],
+    opd:  [205,495,508,535,541,506,354,608,520,523,316,387,349,620,671,633,440,566,601,591,299,282,577,378,569,472],
+    rate: [18.0,9.5,10.8,17.0,17.2,19.4,7.6,11.0,18.8,14.0,13.9,16.5,18.3,13.2,13.8,17.6,13.8,13.0,16.8,14.5,7.35,12.7,9.01,12.4,15.6,20.1],
+    total_c:1808, total_o:12546,
     thr: { epi:14.3, mod:11.8, high:28.0, xtra:32.8 }, baseline:'2024–2025' },
   { name:'KK Sungai Tamang',    short:'Sg. Tamang',    color:'#C084FC',
-    cases:[32,38,40,38,33,29,13,14,16,23,17,16,13,23,26,23,18,16,16,17,12,8,20,21,22],
-    opd:  [171,170,186,193,204,208,92,116,122,125,102,83,91,152,157,150,119,142,140,136,97,54,133,124,164],
-    rate: [18.7,22.4,21.5,19.7,16.2,13.9,14.1,12.1,13.1,18.4,16.7,19.3,14.3,15.1,16.5,15.3,15.1,11.2,11.4,12.5,12.3,14.8,15.04,16.9,13.4],
-    total_c:544, total_o:3431,
+    cases:[32,38,40,38,33,29,13,14,16,23,17,16,13,23,26,23,18,16,16,17,12,8,20,21,22,22],
+    opd:  [171,170,186,193,204,208,92,116,122,125,102,83,91,152,157,150,119,142,140,136,97,54,133,124,164,158],
+    rate: [18.7,22.4,21.5,19.7,16.2,13.9,14.1,12.1,13.1,18.4,16.7,19.3,14.3,15.1,16.5,15.3,15.1,11.2,11.4,12.5,12.3,14.8,15.04,16.9,13.4,13.9],
+    total_c:566, total_o:3589,
     thr: { epi:29.3, mod:28.0, high:39.4, xtra:44.2 }, baseline:'2024–2025' },
   { name:'KK Tawau',            short:'KK Tawau',      color:'#FB923C',
-    cases:[455,489,579,656,534,582,298,669,672,588,325,426,441,611,568,639,503,598,631,572,359,346,652,520,733],
-    opd:  [4737,4432,4235,4482,4218,4699,2441,4824,4442,4041,2465,2580,2816,5018,4448,4812,4058,4925,4770,4864,3035,2896,5059,4012,4863],
-    rate: [9.6,11.0,13.7,14.6,12.7,12.4,12.2,13.9,15.1,14.6,13.2,16.5,15.7,12.2,12.7,13.2,12.3,12.1,13.2,11.7,11.8,11.9,12.89,12.9,15.0],
-    total_c:13446, total_o:103172,
+    cases:[455,489,579,656,534,582,298,669,672,588,325,426,441,611,568,639,503,598,631,572,359,346,652,520,733,774],
+    opd:  [4737,4432,4235,4482,4218,4699,2441,4824,4442,4041,2465,2580,2816,5018,4448,4812,4058,4925,4770,4864,3035,2896,5059,4012,4863,4485],
+    rate: [9.6,11.0,13.7,14.6,12.7,12.4,12.2,13.9,15.1,14.6,13.2,16.5,15.7,12.2,12.7,13.2,12.3,12.1,13.2,11.7,11.8,11.9,12.89,12.9,15.0,17.2],
+    total_c:14220, total_o:107657,
     thr: { epi:12.4, mod:12.0, high:16.8, xtra:20.2 }, baseline:'2024–2025' },
   { name:'KK Kinabutan',        short:'Kinabutan',     color:'#22D3EE',
-    cases:[18,26,32,45,38,39,14,43,50,69,19,25,36,38,36,52,31,40,32,31,13,13,36,35,42],
-    opd:  [319,427,444,491,469,507,207,485,485,584,285,276,349,512,520,524,427,537,505,459,261,210,478,430,524],
-    rate: [5.6,6.1,7.2,9.2,8.1,7.7,6.8,8.9,10.3,11.8,6.7,9.1,10.3,7.4,6.92,9.92,7.25,7.44,6.33,6.75,4.98,6.19,7.53,8.13,8.01],
-    total_c:853, total_o:10715,
+    cases:[18,26,32,45,38,39,14,43,50,69,19,25,36,38,36,52,31,40,32,31,13,13,36,35,42,58],
+    opd:  [319,427,444,491,469,507,207,485,485,584,285,276,349,512,520,524,427,537,505,459,261,210,478,430,524,562],
+    rate: [5.6,6.1,7.2,9.2,8.1,7.7,6.8,8.9,10.3,11.8,6.7,9.1,10.3,7.4,6.92,9.92,7.25,7.44,6.33,6.75,4.98,6.19,7.53,8.13,8.01,10.3],
+    total_c:911, total_o:11277,
     thr: { epi:9.2, mod:8.9, high:13.2, xtra:14.5 }, baseline:'2024–2025' }
 ];
 
@@ -1972,13 +1973,14 @@ const SAMPLE_DATA = [
   {wk:23, samples:15, neg:10, pos:5,  inc:0, yield:33.3,   remarks:'Influenza B, SARS-CoV-2 (4)'},
   {wk:24, samples:15, neg:7,  pos:8,  inc:0, yield:53.3,   remarks:'Influenza B (7), SARS-CoV-2'},
   {wk:25, samples:15, neg:10, pos:5,  inc:0, yield:33.3,   remarks:'Influenza B (4), Influenza A'},
+  {wk:26, samples:15, neg:13, pos:2,  inc:0, yield:13.3,   remarks:'Influenza B, SARS-CoV-2'},
 ];
 
 // Per-week pathogen counts [InfA, InfB, CoV2, Untyped, Inconclusive]
 const PATH_BY_WEEK = [
   [0,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,1,0,0],[0,1,0,0,0],
   [0,0,0,0,0],[0,0,2,0,0],[1,0,1,0,0],[1,2,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],
-  [0,0,0,0,0],[0,1,1,0,1],[0,1,0,0,0],[0,0,1,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,3,1,0,0],[0,2,1,0,0],[0,0,2,0,0],[0,1,1,0,0],[0,1,4,0,0],[0,7,1,0,0],[1,4,0,0,0]
+  [0,0,0,0,0],[0,1,1,0,1],[0,1,0,0,0],[0,0,1,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,3,1,0,0],[0,2,1,0,0],[0,0,2,0,0],[0,1,1,0,0],[0,1,4,0,0],[0,7,1,0,0],[1,4,0,0,0],[0,1,1,0,0]
 ];
 
 // Sample characteristics per week: u18=under 18, o18=18+, m=male, f=female
@@ -2008,6 +2010,7 @@ const SAMPLE_CHARS = {
   23: {u18:5,  o18:10, m:12, f:3},
   24: {u18:6,  o18:9,  m:7,  f:8},
   25: {u18:8,  o18:7,  m:11, f:4},
+  26: {u18:3,  o18:12, m:6,  f:9},
 };
 
 const S_WEEKS  = SAMPLE_DATA.map(d=>`W${d.wk}`);
@@ -2359,6 +2362,12 @@ function computeAllSummaries() {
   const fmt = (wks) => wks.length === 0 ? 'None detected'
     : wks.length === 1 ? `${wks[0]} only`
     : wks.join(', ');
+  // Peak week (highest single-week count) for a given pathogen index
+  const peakWeekPathogen = (idx) => {
+    let bestWk = null, bestCount = 0;
+    PATH_BY_WEEK.forEach((w,i) => { if (w[idx] > bestCount) { bestCount = w[idx]; bestWk = i+1; } });
+    return bestWk ? `Peak Wk ${bestWk} · ${bestCount} case${bestCount > 1 ? 's' : ''}` : 'None detected';
+  };
 
   document.getElementById('sm-total').textContent     = totalSamples;
   document.getElementById('sm-total-sub').textContent = `Weeks 1–${lastWk} · wk ${lastWk+1} pending`;
@@ -2367,11 +2376,11 @@ function computeAllSummaries() {
   document.getElementById('sm-rate').textContent      = overallRate.toFixed(1) + '%';
   document.getElementById('sm-rate-sub').textContent  = `Peak Wk ${peakWkSample.wk} · ${peakWkSample.yield.toFixed(1)}%`;
   document.getElementById('sm-infA').textContent      = infACount;
-  document.getElementById('sm-infA-sub').textContent  = fmt(weeksWithPathogen(0));
+  document.getElementById('sm-infA-sub').textContent  = peakWeekPathogen(0);
   document.getElementById('sm-infB').textContent      = infBCount;
-  document.getElementById('sm-infB-sub').textContent  = fmt(weeksWithPathogen(1));
+  document.getElementById('sm-infB-sub').textContent  = peakWeekPathogen(1);
   document.getElementById('sm-cov2').textContent      = cov2Count;
-  document.getElementById('sm-cov2-sub').textContent  = fmt(weeksWithPathogen(2));
+  document.getElementById('sm-cov2-sub').textContent  = peakWeekPathogen(2);
   document.getElementById('sm-untyped').textContent      = untypedCount;
   document.getElementById('sm-untyped-sub').textContent  = untypedCount > 0
     ? fmt(weeksWithPathogen(3)) : 'None detected';
@@ -2385,16 +2394,16 @@ computeAllSummaries();
 /* ==========================================
    INFLUENZA NOTIFICATIONS - PRIVATE PRACTITIONERS
 ========================================== */
-const NOTIF_WEEKS  = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
-const NOTIF_INFA   = [4,3,6,3,0,2,0,1,0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1];
-const NOTIF_INFB   = [0,0,0,0,0,0,0,0,0, 0, 1, 1, 1, 1, 3, 1, 0, 0, 8, 6, 3, 3, 15, 9, 11];
-const NOTIF_OTHER  = [0,1,0,1,3,0,0,2,1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0];
+const NOTIF_WEEKS  = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
+const NOTIF_INFA   = [4,3,6,3,0,2,0,1,0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 2];
+const NOTIF_INFB   = [0,0,0,0,0,0,0,0,0, 0, 1, 1, 1, 1, 3, 1, 0, 0, 8, 6, 3, 3, 15, 9, 11, 11];
+const NOTIF_OTHER  = [0,1,0,1,3,0,0,2,1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 5];
 // Per-week: u18=under 18, o18=18+
 const NOTIF_META = [
   {u18:3,o18:1},{u18:3,o18:1},{u18:3,o18:3},{u18:2,o18:2},{u18:3,o18:0},
   {u18:2,o18:0},{u18:0,o18:0},{u18:1,o18:2},{u18:1,o18:0},{u18:0,o18:0},
   {u18:1,o18:0},{u18:0,o18:1},{u18:0,o18:2},{u18:1,o18:1},{u18:3,o18:2},
-  {u18:0,o18:1},{u18:2,o18:0},{u18:1,o18:1},{u18:8,o18:1},{u18:5,o18:1},{u18:4,o18:0},{u18:1,o18:3},{u18:10,o18:5},{u18:7,o18:3},{u18:10,o18:2}
+  {u18:0,o18:1},{u18:2,o18:0},{u18:1,o18:1},{u18:8,o18:1},{u18:5,o18:1},{u18:4,o18:0},{u18:1,o18:3},{u18:10,o18:5},{u18:7,o18:3},{u18:10,o18:2},{u18:12,o18:6}
 ];
 const notifLabels  = NOTIF_WEEKS.map(w => 'W' + w);
 
@@ -2447,9 +2456,10 @@ const NOTIF_AGE_BY_WK = {
   9:[0,0,1,0,0,0], 10:[0,0,0,0,0,0],11:[0,0,1,0,0,0],12:[0,0,0,0,1,0],
   13:[0,0,0,1,1,0],14:[1,0,0,0,1,0],15:[2,0,1,2,0,0],16:[0,0,0,0,1,0],
   17:[1,0,1,0,0,0],18:[0,0,1,0,1,0],19:[1,2,5,0,1,0],20:[2,1,2,0,1,0],
-  21:[3,1,0,0,0,0],22:[0,1,0,1,2,0],23:[4,4,2,2,2,1],24:[3,2,2,2,1,0],25:[2,6,2,1,1,0]
+  21:[3,1,0,0,0,0],22:[0,1,0,1,2,0],23:[4,4,2,2,2,1],24:[3,2,2,2,1,0],25:[2,6,2,1,1,0],
+  26:[2,4,6,0,5,1]
 };
-const NOTIF_AGE_CUMUL = [24,23,24,12,18,2];
+const NOTIF_AGE_CUMUL = [26,27,30,12,23,3];
 
 let notifAgeChart = null;
 let notifAgeWk = 'all';
