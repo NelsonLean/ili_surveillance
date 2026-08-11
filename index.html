@@ -306,6 +306,7 @@ body {
    METRIC STRIP
 ══════════════════════════════════════════ */
 .metric-strip { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; }
+.notif-metric-strip { -webkit-overflow-scrolling:touch; }
 .metric {
   background:var(--surface); border:1px solid var(--border);
   border-radius:10px; padding:14px 16px; position:relative; overflow:hidden;
@@ -354,6 +355,7 @@ body {
 
 .chart-wrap { position:relative; width:100%; height:380px; }
 .chart-wrap canvas { touch-action: pan-y; }
+.chart-scroll-x { -webkit-overflow-scrolling:touch; }
 
 .legend {
   display:flex; flex-wrap:wrap; gap:10px 20px;
@@ -597,6 +599,20 @@ body {
   .badge-green { display:none; }
   .toggles { gap:4px; }
   .tog { font-size:10px; padding:4px 9px; }
+
+  /* Notification metric strip — horizontal scroll instead of squished 6-col grid */
+  .notif-metric-strip {
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    gap:10px;
+    padding-bottom:6px;
+  }
+  .notif-metric-strip .metric {
+    flex:0 0 150px;
+    scroll-snap-align:start;
+  }
 }
 
 /* Compact medium: hide date in header */
@@ -620,6 +636,15 @@ body {
   .chart-wrap { height:220px; }
   .header { padding:0 14px; }
   .badge-green { display:none; }
+
+  /* Main trends chart — horizontal scroll instead of squished 52-week view */
+  .chart-scroll-x {
+    overflow-x:auto;
+  }
+  .chart-scroll-x .chart-wrap {
+    min-width:820px;
+    width:820px;
+  }
 
   /* Card header stacks vertically on mobile */
   .card-top { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:12px; }
@@ -925,7 +950,10 @@ body {
           </select>
         </div>
       </div>
-      <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+      <div class="chart-scroll-x">
+        <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+      </div>
+      <p class="table-scroll-hint">← Scroll to see all weeks →</p>
       <div class="legend">
         <span class="leg" id="leg-avg-wrap"><span class="leg-ln" id="leg-avg"></span>Avg curve</span>
         <span class="leg" id="leg-ci-wrap"><span class="leg-box" style="background:#4D94FF"></span>90% CI</span>
@@ -1138,7 +1166,7 @@ body {
     </div>
 
     <!-- Metric cards row -->
-    <div class="metric-strip fade-up d5" style="grid-template-columns:repeat(6,minmax(0,1fr));">
+    <div class="metric-strip notif-metric-strip fade-up d5" style="grid-template-columns:repeat(6,minmax(0,1fr));">
       <div class="metric c-custom" style="--metric-accent:#38BDF8">
         <div class="m-label">Total notifications</div>
         <div class="m-value" style="color:#38BDF8">165</div>
@@ -1170,6 +1198,7 @@ body {
         <div class="m-sub">Including A&amp;B, Parainfluenza</div>
       </div>
     </div>
+    <p class="table-scroll-hint">← Scroll to see all metrics →</p>
 
 
     <!-- Weekly notifications + Age group side by side -->
